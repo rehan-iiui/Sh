@@ -1,11 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Shop Manager</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,16 +12,18 @@
 
   <div class="app">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
 
       <div class="logo">
         <div class="logo-icon">S</div>
+
         <div>
           <h2>Shop Manager</h2>
           <p>Business Center</p>
         </div>
       </div>
+
 
       <nav class="navigation">
 
@@ -63,6 +64,7 @@
 
       </nav>
 
+
       <div class="sidebar-bottom">
 
         <button class="nav-item" data-page="settings">
@@ -75,30 +77,53 @@
     </aside>
 
 
-    <!-- Main Area -->
+    <!-- MAIN -->
     <main class="main">
 
-      <!-- Top Bar -->
+      <!-- TOPBAR -->
       <header class="topbar">
 
         <div>
-          <h1 id="pageTitle">Dashboard</h1>
-          <p id="pageSubtitle">Welcome to your shop</p>
+
+          <h1 id="pageTitle">
+            Dashboard
+          </h1>
+
+          <p id="pageSubtitle">
+            Welcome to your shop
+          </p>
+
         </div>
+
 
         <div class="top-actions">
 
-          <button class="icon-button" title="Notifications">
+          <button
+            class="icon-button"
+            title="Notifications"
+          >
             🔔
           </button>
 
+
           <div class="profile">
-            <div class="profile-avatar">SM</div>
+
+            <div class="profile-avatar">
+              SM
+            </div>
 
             <div class="profile-info">
-              <strong>Shop Owner</strong>
-              <span>Administrator</span>
+
+              <strong>
+                Shop Owner
+              </strong>
+
+              <span>
+                Administrator
+              </span>
+
             </div>
+
           </div>
 
         </div>
@@ -106,89 +131,284 @@
       </header>
 
 
-      <!-- Dashboard -->
-      <section class="page active-page" id="dashboard">
+      <!-- ==========================================
+           DASHBOARD
+           ========================================== -->
 
+      <section
+        class="page active-page"
+        id="dashboard"
+      >
+
+        <!-- WELCOME -->
         <div class="welcome-card">
 
           <div>
-            <p class="small-label">SHOP OVERVIEW</p>
-            <h2>Good day! 👋</h2>
-            <p>Manage your shop from one place.</p>
+
+            <p class="small-label">
+              SHOP OVERVIEW
+            </p>
+
+            <h2>
+              Good day! 👋
+            </h2>
+
+            <p>
+              Manage your shop from one place.
+            </p>
+
           </div>
 
-          <button class="primary-button" id="quickSaleButton">
+
+          <button
+            class="primary-button"
+            id="quickSaleButton"
+          >
             + New Sale
           </button>
 
         </div>
 
 
-        <!-- Statistics -->
+        <!-- MAIN STATS -->
         <div class="stats-grid">
 
           <div class="stat-card">
-            <div class="stat-icon">💰</div>
-            <div>
-              <span>Today's Sales</span>
-              <strong id="todaySales">Rs. 0</strong>
+
+            <div class="stat-icon">
+              💰
             </div>
+
+            <div>
+
+              <span>
+                Today's Sales
+              </span>
+
+              <strong id="todaySales">
+                Rs. 0
+              </strong>
+
+            </div>
+
           </div>
 
-          <div class="stat-card">
-            <div class="stat-icon">📦</div>
-            <div>
-              <span>Total Products</span>
-              <strong id="totalProducts">0</strong>
-            </div>
-          </div>
 
           <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div>
-              <span>Customers</span>
-              <strong id="totalCustomers">0</strong>
+
+            <div class="stat-icon">
+              📦
             </div>
+
+            <div>
+
+              <span>
+                Total Products
+              </span>
+
+              <strong id="totalProducts">
+                0
+              </strong>
+
+            </div>
+
           </div>
 
+
           <div class="stat-card">
-            <div class="stat-icon">📈</div>
-            <div>
-              <span>Profit</span>
-              <strong id="totalProfit">Rs. 0</strong>
+
+            <div class="stat-icon">
+              👥
             </div>
+
+            <div>
+
+              <span>
+                Customers
+              </span>
+
+              <strong id="totalCustomers">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              📈
+            </div>
+
+            <div>
+
+              <span>
+                Profit
+              </span>
+
+              <strong id="totalProfit">
+                Rs. 0
+              </strong>
+
+            </div>
+
           </div>
 
         </div>
 
 
-        <!-- Dashboard Content -->
+        <!-- ==========================================
+             ANALYTICS
+             ========================================== -->
+
+        <div class="analytics-grid">
+
+
+          <!-- SALES CHART -->
+          <div class="panel analytics-panel">
+
+            <div class="panel-header">
+
+              <div>
+
+                <h3>
+                  Sales Overview
+                </h3>
+
+                <p>
+                  Your sales during the last 7 days
+                </p>
+
+              </div>
+
+              <span class="chart-badge">
+                7 Days
+              </span>
+
+            </div>
+
+
+            <div class="chart-container">
+
+              <canvas id="salesChart"></canvas>
+
+              <div
+                class="chart-empty"
+                id="salesChartEmpty"
+              >
+                <div>📊</div>
+                <p>No sales data yet</p>
+                <small>
+                  Complete a sale to see your analytics.
+                </small>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SALES VS EXPENSES -->
+          <div class="panel analytics-panel">
+
+            <div class="panel-header">
+
+              <div>
+
+                <h3>
+                  Sales vs Expenses
+                </h3>
+
+                <p>
+                  Compare your business activity
+                </p>
+
+              </div>
+
+              <span class="chart-badge">
+                7 Days
+              </span>
+
+            </div>
+
+
+            <div class="chart-container">
+
+              <canvas id="comparisonChart"></canvas>
+
+              <div
+                class="chart-empty"
+                id="comparisonChartEmpty"
+              >
+                <div>📈</div>
+                <p>No data yet</p>
+                <small>
+                  Sales and expenses will appear here.
+                </small>
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- ==========================================
+             RECENT SALES + INVENTORY
+             ========================================== -->
+
         <div class="dashboard-grid">
 
+
+          <!-- RECENT SALES -->
           <div class="panel">
 
             <div class="panel-header">
+
               <div>
-                <h3>Recent Sales</h3>
-                <p>Your latest transactions</p>
+
+                <h3>
+                  Recent Sales
+                </h3>
+
+                <p>
+                  Your latest transactions
+                </p>
+
               </div>
 
-              <button class="text-button" data-page-target="sales">
+              <button
+                class="text-button"
+                data-page-target="sales"
+              >
                 View All
               </button>
+
             </div>
+
 
             <div class="empty-state">
 
-              <div class="empty-icon">🧾</div>
+              <div class="empty-icon">
+                🧾
+              </div>
 
-              <h3>No sales yet</h3>
+              <h3>
+                No sales yet
+              </h3>
 
               <p>
                 Your recent sales will appear here.
               </p>
 
-              <button class="primary-button" id="emptySaleButton">
+              <button
+                class="primary-button"
+                id="emptySaleButton"
+              >
                 Create First Sale
               </button>
 
@@ -197,34 +417,71 @@
           </div>
 
 
+          <!-- INVENTORY -->
           <div class="panel">
 
             <div class="panel-header">
+
               <div>
-                <h3>Inventory Status</h3>
-                <p>Quick stock overview</p>
+
+                <h3>
+                  Inventory Status
+                </h3>
+
+                <p>
+                  Quick stock overview
+                </p>
+
               </div>
 
-              <button class="text-button" data-page-target="products">
+              <button
+                class="text-button"
+                data-page-target="products"
+              >
                 Manage
               </button>
+
             </div>
+
 
             <div class="inventory-summary">
 
               <div class="inventory-row">
-                <span>Products in Stock</span>
-                <strong id="stockProducts">0</strong>
+
+                <span>
+                  Products in Stock
+                </span>
+
+                <strong id="stockProducts">
+                  0
+                </strong>
+
               </div>
 
-              <div class="inventory-row">
-                <span>Low Stock</span>
-                <strong id="lowStockProducts">0</strong>
-              </div>
 
               <div class="inventory-row">
-                <span>Out of Stock</span>
-                <strong id="outStockProducts">0</strong>
+
+                <span>
+                  Low Stock
+                </span>
+
+                <strong id="lowStockProducts">
+                  0
+                </strong>
+
+              </div>
+
+
+              <div class="inventory-row">
+
+                <span>
+                  Out of Stock
+                </span>
+
+                <strong id="outStockProducts">
+                  0
+                </strong>
+
               </div>
 
             </div>
@@ -236,87 +493,91 @@
       </section>
 
 
-      <!-- Products -->
-      <section class="page" id="products">
+      <!-- ==========================================
+           FEATURE PAGES
+           ========================================== -->
 
-        <div class="page-placeholder">
-          <div>📦</div>
-          <h2>Products</h2>
-          <p>Product management will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="products"
+      >
+        <iframe
+          class="feature-frame"
+          src="products/products.html"
+          title="Products"
+        ></iframe>
       </section>
 
 
-      <!-- Sales -->
-      <section class="page" id="sales">
-
-        <div class="page-placeholder">
-          <div>💰</div>
-          <h2>Sales</h2>
-          <p>Sales management will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="sales"
+      >
+        <iframe
+          class="feature-frame"
+          src="sales/sales.html"
+          title="Sales"
+        ></iframe>
       </section>
 
 
-      <!-- Customers -->
-      <section class="page" id="customers">
-
-        <div class="page-placeholder">
-          <div>👥</div>
-          <h2>Customers</h2>
-          <p>Customer management will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="customers"
+      >
+        <iframe
+          class="feature-frame"
+          src="customers/customers.html"
+          title="Customers"
+        ></iframe>
       </section>
 
 
-      <!-- Expenses -->
-      <section class="page" id="expenses">
-
-        <div class="page-placeholder">
-          <div>💳</div>
-          <h2>Expenses</h2>
-          <p>Expense management will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="expenses"
+      >
+        <iframe
+          class="feature-frame"
+          src="expenses/expenses.html"
+          title="Expenses"
+        ></iframe>
       </section>
 
 
-      <!-- Invoices -->
-      <section class="page" id="invoices">
-
-        <div class="page-placeholder">
-          <div>🧾</div>
-          <h2>Invoices</h2>
-          <p>Invoice management will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="invoices"
+      >
+        <iframe
+          class="feature-frame"
+          src="invoices/invoices.html"
+          title="Invoices"
+        ></iframe>
       </section>
 
 
-      <!-- Reports -->
-      <section class="page" id="reports">
-
-        <div class="page-placeholder">
-          <div>📈</div>
-          <h2>Reports</h2>
-          <p>Business reports will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="reports"
+      >
+        <iframe
+          class="feature-frame"
+          src="reports/reports.html"
+          title="Reports"
+        ></iframe>
       </section>
 
 
-      <!-- Settings -->
-      <section class="page" id="settings">
-
-        <div class="page-placeholder">
-          <div>⚙️</div>
-          <h2>Settings</h2>
-          <p>Shop settings will be added here.</p>
-        </div>
-
+      <section
+        class="page feature-page"
+        id="settings"
+      >
+        <iframe
+          class="feature-frame"
+          src="settings/settings.html"
+          title="Settings"
+        ></iframe>
       </section>
 
     </main>
