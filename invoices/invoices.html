@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices - Shop Manager</title>
+  <link rel="stylesheet" href="invoices.css">
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div>
+        <h1>Invoices</h1>
+        <p>Create, view, print and manage customer invoices.</p>
+      </div>
+
+      <button class="primary-btn" id="createInvoiceBtn">
+        <span>＋</span>
+        Create Invoice
+      </button>
+    </header>
+
+
+    <!-- Statistics -->
+    <section class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div>
+          <span>Total Invoices</span>
+          <strong id="totalInvoices">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div>
+          <span>Today's Invoices</span>
+          <strong id="todayInvoices">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div>
+          <span>Total Billed</span>
+          <strong id="totalBilled">Rs 0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div>
+          <span>This Month</span>
+          <strong id="monthBilled">Rs 0</strong>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- Invoice List -->
+    <section class="content-card">
+
+      <div class="card-top">
+        <div>
+          <h2>Invoice List</h2>
+          <p>Your customer invoices</p>
+        </div>
+
+        <div class="search-box">
+          <span>🔎</span>
+          <input
+            type="text"
+            id="invoiceSearch"
+            placeholder="Search invoices..."
+            autocomplete="off"
+          >
+        </div>
+      </div>
+
+
+      <!-- Table -->
+      <div class="table-wrapper">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="invoiceTableBody">
+          </tbody>
+        </table>
+
+      </div>
+
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🧾</div>
+        <h3>No invoices yet</h3>
+        <p>Create an invoice from a completed sale to see it here.</p>
+
+        <button class="primary-btn" id="emptyCreateBtn">
+          ＋ Create Invoice
+        </button>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <!-- Create Invoice Modal -->
+  <div class="modal-overlay" id="createInvoiceModal">
+
+    <div class="modal">
+
+      <div class="modal-header">
+        <div>
+          <h2>Create Invoice</h2>
+          <p>Generate an invoice from a completed sale.</p>
+        </div>
+
+        <button class="close-btn" id="closeCreateModal">×</button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="saleSelect">Select Completed Sale</label>
+
+          <select id="saleSelect">
+            <option value="">Choose a sale...</option>
+          </select>
+        </div>
+
+
+        <!-- Sale Information -->
+        <div class="sale-info" id="saleInfo">
+
+          <div class="info-row">
+            <span>Sale ID</span>
+            <strong id="selectedSaleId">—</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Customer</span>
+            <strong id="selectedCustomer">—</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Date</span>
+            <strong id="selectedSaleDate">—</strong>
+          </div>
+
+          <div class="info-row">
+            <span>Total</span>
+            <strong id="selectedSaleTotal">Rs 0</strong>
+          </div>
+
+        </div>
+
+
+        <!-- Sale Items -->
+        <div class="preview-section">
+
+          <h3>Items</h3>
+
+          <div id="selectedSaleItems" class="selected-items">
+            <p class="muted-text">Select a sale to see its items.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+        <button class="secondary-btn" id="cancelCreateInvoice">
+          Cancel
+        </button>
+
+        <button class="primary-btn" id="saveInvoiceBtn">
+          Create Invoice
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- View Invoice Modal -->
+  <div class="modal-overlay" id="viewInvoiceModal">
+
+    <div class="modal invoice-modal">
+
+      <div class="modal-header">
+        <div>
+          <h2>Invoice</h2>
+          <p>Invoice details and print preview.</p>
+        </div>
+
+        <button class="close-btn" id="closeViewModal">×</button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <div class="invoice-preview" id="invoicePreview">
+
+          <!-- Invoice Header -->
+          <div class="invoice-top">
+
+            <div>
+              <h1>SHOP MANAGER</h1>
+              <p>Customer Invoice</p>
+            </div>
+
+            <div class="invoice-number">
+              <span>Invoice</span>
+              <strong id="previewInvoiceNumber">INV-000000</strong>
+            </div>
+
+          </div>
+
+
+          <!-- Invoice Details -->
+          <div class="invoice-details">
+
+            <div>
+              <span>Bill To</span>
+              <strong id="previewCustomer">Walk-in Customer</strong>
+            </div>
+
+            <div>
+              <span>Invoice Date</span>
+              <strong id="previewDate">—</strong>
+            </div>
+
+            <div>
+              <span>Sale ID</span>
+              <strong id="previewSaleId">—</strong>
+            </div>
+
+          </div>
+
+
+          <!-- Invoice Items -->
+          <div class="invoice-items">
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+
+              <tbody id="previewItemsBody">
+              </tbody>
+            </table>
+
+          </div>
+
+
+          <!-- Invoice Total -->
+          <div class="invoice-total">
+
+            <div>
+              <span>Total</span>
+              <strong id="previewTotal">Rs 0</strong>
+            </div>
+
+          </div>
+
+
+          <div class="invoice-footer">
+            <p>Thank you for your business!</p>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button class="secondary-btn" id="closeInvoiceBtn">
+          Close
+        </button>
+
+        <button class="primary-btn" id="printInvoiceBtn">
+          🖨️ Print Invoice
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="invoices.js"></script>
+
+</body>
+</html>
+```
