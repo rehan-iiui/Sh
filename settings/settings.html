@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Shop Manager</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+
+  <div class="settings-page">
+
+    <div class="page-header">
+      <div>
+        <h1>Settings</h1>
+        <p>Manage your shop information and app preferences.</p>
+      </div>
+
+      <button class="save-btn" id="saveSettingsBtn">
+        Save Settings
+      </button>
+    </div>
+
+    <!-- Shop Information -->
+    <section class="settings-card">
+      <div class="card-title">
+        <div class="title-icon">🏪</div>
+        <div>
+          <h2>Shop Information</h2>
+          <p>Basic information about your business.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="shopName">Shop Name</label>
+          <input type="text" id="shopName" placeholder="My Shop">
+        </div>
+
+        <div class="form-group">
+          <label for="ownerName">Owner Name</label>
+          <input type="text" id="ownerName" placeholder="Owner name">
+        </div>
+
+        <div class="form-group">
+          <label for="shopPhone">Phone</label>
+          <input type="tel" id="shopPhone" placeholder="03XX-XXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label for="shopEmail">Email</label>
+          <input type="email" id="shopEmail" placeholder="shop@example.com">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="shopAddress">Shop Address</label>
+          <textarea id="shopAddress" rows="3" placeholder="Enter your shop address"></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Business Settings -->
+    <section class="settings-card">
+
+      <div class="card-title">
+        <div class="title-icon">⚙️</div>
+        <div>
+          <h2>Business Settings</h2>
+          <p>Customize how Shop Manager works.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option value="Rs">Rs (Rupees)</option>
+            <option value="$">$ (Dollar)</option>
+            <option value="€">€ (Euro)</option>
+            <option value="£">£ (Pound)</option>
+            <option value="¥">¥ (Yen)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="invoicePrefix">Invoice Prefix</label>
+          <input type="text" id="invoicePrefix" placeholder="INV">
+        </div>
+
+        <div class="form-group">
+          <label for="lowStockThreshold">Low Stock Threshold</label>
+          <input type="number" id="lowStockThreshold" min="1" max="100" placeholder="5">
+          <small>Products at or below this number will be marked as low stock.</small>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Appearance -->
+    <section class="settings-card">
+
+      <div class="card-title">
+        <div class="title-icon">🎨</div>
+        <div>
+          <h2>Appearance</h2>
+          <p>Choose how the app looks.</p>
+        </div>
+      </div>
+
+      <div class="appearance-options">
+
+        <label class="theme-option">
+          <input type="radio" name="theme" value="light">
+          <div class="theme-preview light-preview">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <span>Light</span>
+        </label>
+
+        <label class="theme-option">
+          <input type="radio" name="theme" value="dark">
+          <div class="theme-preview dark-preview">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <span>Dark</span>
+        </label>
+
+        <label class="theme-option">
+          <input type="radio" name="theme" value="system">
+          <div class="theme-preview system-preview">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <span>System Default</span>
+        </label>
+
+      </div>
+    </section>
+
+    <!-- Data Management -->
+    <section class="settings-card">
+
+      <div class="card-title">
+        <div class="title-icon">💾</div>
+        <div>
+          <h2>Data Management</h2>
+          <p>Manage your Shop Manager data.</p>
+        </div>
+      </div>
+
+      <div class="data-actions">
+
+        <button class="data-btn" id="exportDataBtn">
+          <span>📤</span>
+          <div>
+            <strong>Export Data</strong>
+            <small>Download a backup of your shop data.</small>
+          </div>
+        </button>
+
+        <button class="data-btn" id="importDataBtn">
+          <span>📥</span>
+          <div>
+            <strong>Import Data</strong>
+            <small>Restore data from a backup file.</small>
+          </div>
+        </button>
+
+        <input type="file" id="importFile" accept=".json" hidden>
+
+      </div>
+    </section>
+
+    <!-- Danger Zone -->
+    <section class="settings-card danger-card">
+
+      <div class="card-title">
+        <div class="title-icon">⚠️</div>
+        <div>
+          <h2>Danger Zone</h2>
+          <p>These actions can permanently remove your data.</p>
+        </div>
+      </div>
+
+      <div class="danger-action">
+
+        <div>
+          <strong>Reset Shop Manager</strong>
+          <p>Delete all products, sales, customers, expenses, invoices and settings.</p>
+        </div>
+
+        <button class="reset-btn" id="resetDataBtn">
+          Reset All Data
+        </button>
+
+      </div>
+
+    </section>
+
+    <div class="save-message" id="saveMessage">
+      Settings saved successfully!
+    </div>
+
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
+```
