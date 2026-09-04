@@ -1,0 +1,535 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #f5f6fa;
+  color: #202124;
+}
+
+body {
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.app {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+  width: 250px;
+  height: 100%;
+  background: #ffffff;
+  border-right: 1px solid #e7e7e7;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 28px;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #e53935;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.logo h2 {
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.logo p {
+  font-size: 11px;
+  color: #888;
+  margin-top: 3px;
+}
+
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 13px;
+  border-radius: 10px;
+  background: transparent;
+  color: #666;
+  text-align: left;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.nav-item span {
+  width: 22px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.nav-item:hover {
+  background: #f7f7f7;
+  color: #222;
+}
+
+.nav-item.active {
+  background: #fff0f0;
+  color: #d62828;
+  font-weight: 600;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar {
+  min-height: 82px;
+  background: #ffffff;
+  border-bottom: 1px solid #e7e7e7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 30px;
+}
+
+.topbar h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.topbar p {
+  color: #888;
+  font-size: 13px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f5f5f5;
+  font-size: 18px;
+}
+
+.icon-button:hover {
+  background: #eeeeee;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #202124;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-info strong {
+  font-size: 13px;
+}
+
+.profile-info span {
+  font-size: 11px;
+  color: #999;
+}
+
+/* =========================
+   PAGES
+========================= */
+
+.page {
+  display: none;
+  padding: 30px;
+}
+
+.page.active-page {
+  display: block;
+}
+
+/* =========================
+   WELCOME
+========================= */
+
+.welcome-card {
+  background: linear-gradient(135deg, #ffffff, #fff7f7);
+  border: 1px solid #eeeeee;
+  border-radius: 16px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.small-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #d62828;
+  margin-bottom: 7px;
+}
+
+.welcome-card h2 {
+  font-size: 23px;
+  margin-bottom: 5px;
+}
+
+.welcome-card p:not(.small-label) {
+  color: #777;
+  font-size: 13px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.primary-button {
+  background: #e53935;
+  color: white;
+  padding: 11px 17px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.primary-button:hover {
+  background: #c62828;
+  transform: translateY(-1px);
+}
+
+.text-button {
+  background: transparent;
+  color: #d62828;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   STATISTICS
+========================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 11px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.stat-card span {
+  display: block;
+  color: #888;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.stat-card strong {
+  font-size: 18px;
+}
+
+/* =========================
+   DASHBOARD PANELS
+========================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 14px;
+  padding: 20px;
+  min-height: 300px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.panel-header h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.panel-header p {
+  color: #999;
+  font-size: 11px;
+}
+
+.empty-state {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.empty-state h3 {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.empty-state p {
+  color: #999;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+/* =========================
+   INVENTORY
+========================= */
+
+.inventory-summary {
+  padding-top: 10px;
+}
+
+.inventory-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 3px;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 13px;
+}
+
+.inventory-row:last-child {
+  border-bottom: none;
+}
+
+.inventory-row span {
+  color: #777;
+}
+
+.inventory-row strong {
+  font-size: 15px;
+}
+
+/* =========================
+   PLACEHOLDER PAGES
+========================= */
+
+.page-placeholder {
+  min-height: 450px;
+  background: white;
+  border: 1px solid #eeeeee;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.page-placeholder > div {
+  font-size: 45px;
+  margin-bottom: 15px;
+}
+
+.page-placeholder h2 {
+  font-size: 22px;
+  margin-bottom: 7px;
+}
+
+.page-placeholder p {
+  color: #999;
+  font-size: 13px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 210px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 650px) {
+
+  .sidebar {
+    width: 72px;
+    padding: 18px 10px;
+  }
+
+  .logo {
+    justify-content: center;
+    padding: 0 0 25px;
+  }
+
+  .logo > div:last-child {
+    display: none;
+  }
+
+  .logo-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 12px 5px;
+  }
+
+  .nav-item span {
+    font-size: 19px;
+  }
+
+  .nav-item {
+    font-size: 0;
+  }
+
+  .topbar {
+    padding: 15px 18px;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .page {
+    padding: 18px;
+  }
+
+  .welcome-card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+```
