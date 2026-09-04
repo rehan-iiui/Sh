@@ -1129,9 +1129,7 @@ function setupEvents() {
   if (businessButton) {
     businessButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         saveBusinessSettings();
       }
     );
@@ -1170,9 +1168,7 @@ function setupEvents() {
   if (exportButton) {
     exportButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         createBackup();
       }
     );
@@ -1204,9 +1200,7 @@ function setupEvents() {
   if (closeButton) {
     closeButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         closeImportModal();
       }
     );
@@ -1223,9 +1217,7 @@ function setupEvents() {
   if (cancelButton) {
     cancelButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         closeImportModal();
       }
     );
@@ -1242,9 +1234,7 @@ function setupEvents() {
   if (restoreButton) {
     restoreButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         restoreBackup();
       }
     );
@@ -1261,9 +1251,7 @@ function setupEvents() {
   if (resetButton) {
     resetButton.addEventListener(
       "click",
-      function (event) {
-        event.preventDefault();
-
+      function () {
         resetAllData();
       }
     );
@@ -1387,4 +1375,3 @@ document.addEventListener(
     updateBackupSummary();
   }
 );
-```
