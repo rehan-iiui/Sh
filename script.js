@@ -1,358 +1,532 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+// ==========================================
+// SHOP MANAGER - MAIN JAVASCRIPT
+// ==========================================
 
-  <title>Shop Manager</title>
+document.addEventListener("DOMContentLoaded", () => {
 
-  <link rel="stylesheet" href="style.css">
-</head>
+  // ------------------------------------------
+  // PAGE INFORMATION
+  // ------------------------------------------
 
-<body>
+  const pageInfo = {
 
-  <div class="app">
+    dashboard: {
+      title: "Dashboard",
+      subtitle: "Welcome to your shop"
+    },
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    products: {
+      title: "Products",
+      subtitle: "Manage your shop products"
+    },
 
-      <div class="logo">
-        <div class="logo-icon">S</div>
+    sales: {
+      title: "Sales",
+      subtitle: "Track your sales and transactions"
+    },
 
-        <div>
-          <h2>Shop Manager</h2>
-          <p>Business Center</p>
-        </div>
-      </div>
+    customers: {
+      title: "Customers",
+      subtitle: "Manage your customers"
+    },
 
-      <nav class="navigation">
+    expenses: {
+      title: "Expenses",
+      subtitle: "Track your business expenses"
+    },
 
-        <button class="nav-item active" data-page="dashboard">
-          <span>📊</span>
-          Dashboard
-        </button>
+    invoices: {
+      title: "Invoices",
+      subtitle: "Create and manage invoices"
+    },
 
-        <button class="nav-item" data-page="products">
-          <span>📦</span>
-          Products
-        </button>
+    reports: {
+      title: "Reports",
+      subtitle: "View your business performance"
+    },
 
-        <button class="nav-item" data-page="sales">
-          <span>💰</span>
-          Sales
-        </button>
+    settings: {
+      title: "Settings",
+      subtitle: "Manage your shop settings"
+    }
 
-        <button class="nav-item" data-page="customers">
-          <span>👥</span>
-          Customers
-        </button>
+  };
 
-        <button class="nav-item" data-page="expenses">
-          <span>💳</span>
-          Expenses
-        </button>
 
-        <button class="nav-item" data-page="invoices">
-          <span>🧾</span>
-          Invoices
-        </button>
+  // ------------------------------------------
+  // ELEMENTS
+  // ------------------------------------------
 
-        <button class="nav-item" data-page="reports">
-          <span>📈</span>
-          Reports
-        </button>
+  const navItems =
+    document.querySelectorAll(".nav-item[data-page]");
 
-      </nav>
+  const pages =
+    document.querySelectorAll(".page");
 
-      <div class="sidebar-bottom">
+  const pageTitle =
+    document.getElementById("pageTitle");
 
-        <button class="nav-item" data-page="settings">
-          <span>⚙️</span>
-          Settings
-        </button>
+  const pageSubtitle =
+    document.getElementById("pageSubtitle");
 
-      </div>
 
-    </aside>
+  // ------------------------------------------
+  // SHOW PAGE
+  // ------------------------------------------
 
+  function showPage(pageId) {
 
-    <!-- Main Area -->
-    <main class="main">
+    pages.forEach(page => {
+      page.classList.remove("active-page");
+    });
 
-      <!-- Top Bar -->
-      <header class="topbar">
 
-        <div>
-          <h1 id="pageTitle">Dashboard</h1>
-          <p id="pageSubtitle">Welcome to your shop</p>
-        </div>
+    const selectedPage =
+      document.getElementById(pageId);
 
-        <div class="top-actions">
 
-          <button class="icon-button" title="Notifications">
-            🔔
-          </button>
+    if (selectedPage) {
+      selectedPage.classList.add("active-page");
+    }
 
-          <div class="profile">
 
-            <div class="profile-avatar">SM</div>
+    // Update sidebar
+    navItems.forEach(button => {
 
-            <div class="profile-info">
-              <strong>Shop Owner</strong>
-              <span>Administrator</span>
-            </div>
+      button.classList.remove("active");
 
-          </div>
+      if (button.dataset.page === pageId) {
+        button.classList.add("active");
+      }
 
-        </div>
+    });
 
-      </header>
 
+    // Update top title
+    if (pageInfo[pageId]) {
 
-      <!-- Dashboard -->
-      <section class="page active-page" id="dashboard">
+      pageTitle.textContent =
+        pageInfo[pageId].title;
 
-        <div class="welcome-card">
+      pageSubtitle.textContent =
+        pageInfo[pageId].subtitle;
 
-          <div>
-            <p class="small-label">SHOP OVERVIEW</p>
+    }
 
-            <h2>Good day! 👋</h2>
 
-            <p>Manage your shop from one place.</p>
-          </div>
+    // Scroll main area to top
+    const main =
+      document.querySelector(".main");
 
-          <button class="primary-button" id="quickSaleButton">
-            + New Sale
-          </button>
+    if (main) {
+      main.scrollTop = 0;
+    }
 
-        </div>
+  }
 
 
-        <!-- Statistics -->
-        <div class="stats-grid">
+  // ------------------------------------------
+  // SIDEBAR NAVIGATION
+  // ------------------------------------------
 
-          <div class="stat-card">
+  navItems.forEach(button => {
 
-            <div class="stat-icon">💰</div>
+    button.addEventListener("click", () => {
 
-            <div>
-              <span>Today's Sales</span>
-              <strong id="todaySales">Rs. 0</strong>
-            </div>
+      const pageId =
+        button.dataset.page;
 
-          </div>
+      showPage(pageId);
 
+    });
 
-          <div class="stat-card">
+  });
 
-            <div class="stat-icon">📦</div>
 
-            <div>
-              <span>Total Products</span>
-              <strong id="totalProducts">0</strong>
-            </div>
+  // ------------------------------------------
+  // INTERNAL PAGE BUTTONS
+  // ------------------------------------------
 
-          </div>
+  const pageTargetButtons =
+    document.querySelectorAll("[data-page-target]");
 
 
-          <div class="stat-card">
+  pageTargetButtons.forEach(button => {
 
-            <div class="stat-icon">👥</div>
+    button.addEventListener("click", () => {
 
-            <div>
-              <span>Customers</span>
-              <strong id="totalCustomers">0</strong>
-            </div>
+      const pageId =
+        button.dataset.pageTarget;
 
-          </div>
+      showPage(pageId);
 
+    });
 
-          <div class="stat-card">
+  });
 
-            <div class="stat-icon">📈</div>
 
-            <div>
-              <span>Profit</span>
-              <strong id="totalProfit">Rs. 0</strong>
-            </div>
+  // ------------------------------------------
+  // QUICK SALE
+  // ------------------------------------------
 
-          </div>
+  const quickSaleButton =
+    document.getElementById("quickSaleButton");
 
-        </div>
+  const emptySaleButton =
+    document.getElementById("emptySaleButton");
 
 
-        <!-- Dashboard Content -->
-        <div class="dashboard-grid">
+  function openSalesPage() {
 
-          <div class="panel">
+    showPage("sales");
 
-            <div class="panel-header">
+  }
 
-              <div>
-                <h3>Recent Sales</h3>
-                <p>Your latest transactions</p>
-              </div>
 
-              <button class="text-button" data-page-target="sales">
-                View All
-              </button>
+  if (quickSaleButton) {
 
-            </div>
+    quickSaleButton.addEventListener(
+      "click",
+      openSalesPage
+    );
 
+  }
 
-            <div class="empty-state">
 
-              <div class="empty-icon">🧾</div>
+  if (emptySaleButton) {
 
-              <h3>No sales yet</h3>
+    emptySaleButton.addEventListener(
+      "click",
+      openSalesPage
+    );
 
-              <p>
-                Your recent sales will appear here.
-              </p>
+  }
 
-              <button class="primary-button" id="emptySaleButton">
-                Create First Sale
-              </button>
 
-            </div>
+  // ------------------------------------------
+  // DASHBOARD DATA
+  // ------------------------------------------
 
-          </div>
+  function getArray(key) {
 
+    try {
 
-          <div class="panel">
+      const data =
+        JSON.parse(localStorage.getItem(key));
 
-            <div class="panel-header">
+      return Array.isArray(data) ? data : [];
 
-              <div>
-                <h3>Inventory Status</h3>
-                <p>Quick stock overview</p>
-              </div>
+    } catch (error) {
 
-              <button class="text-button" data-page-target="products">
-                Manage
-              </button>
+      return [];
 
-            </div>
+    }
 
+  }
 
-            <div class="inventory-summary">
 
-              <div class="inventory-row">
-                <span>Products in Stock</span>
-                <strong id="stockProducts">0</strong>
-              </div>
+  function getToday() {
 
-              <div class="inventory-row">
-                <span>Low Stock</span>
-                <strong id="lowStockProducts">0</strong>
-              </div>
+    const now = new Date();
 
-              <div class="inventory-row">
-                <span>Out of Stock</span>
-                <strong id="outStockProducts">0</strong>
-              </div>
+    const year =
+      now.getFullYear();
 
-            </div>
+    const month =
+      String(now.getMonth() + 1).padStart(2, "0");
 
-          </div>
+    const day =
+      String(now.getDate()).padStart(2, "0");
 
-        </div>
+    return `${year}-${month}-${day}`;
 
-      </section>
+  }
 
 
-      <!-- Products -->
-      <section class="page feature-page" id="products">
+  function getSaleDate(sale) {
 
-        <iframe
-          class="feature-frame"
-          src="products/products.html"
-          title="Products">
-        </iframe>
+    if (!sale || !sale.date) {
+      return "";
+    }
 
-      </section>
+    const date =
+      new Date(sale.date);
 
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
 
-      <!-- Sales -->
-      <section class="page feature-page" id="sales">
+    const year =
+      date.getFullYear();
 
-        <iframe
-          class="feature-frame"
-          src="sales/sales.html"
-          title="Sales">
-        </iframe>
+    const month =
+      String(date.getMonth() + 1).padStart(2, "0");
 
-      </section>
+    const day =
+      String(date.getDate()).padStart(2, "0");
 
+    return `${year}-${month}-${day}`;
 
-      <!-- Customers -->
-      <section class="page feature-page" id="customers">
+  }
 
-        <iframe
-          class="feature-frame"
-          src="customers/customers.html"
-          title="Customers">
-        </iframe>
 
-      </section>
+  // ------------------------------------------
+  // UPDATE DASHBOARD
+  // ------------------------------------------
 
+  function updateDashboard() {
 
-      <!-- Expenses -->
-      <section class="page feature-page" id="expenses">
+    const products =
+      getArray("shopManagerProducts");
 
-        <iframe
-          class="feature-frame"
-          src="expenses/expenses.html"
-          title="Expenses">
-        </iframe>
+    const sales =
+      getArray("shopManagerSales");
 
-      </section>
+    const customers =
+      getArray("shopManagerCustomers");
 
 
-      <!-- Invoices -->
-      <section class="page feature-page" id="invoices">
+    // ----------------------------------------
+    // PRODUCTS
+    // ----------------------------------------
 
-        <iframe
-          class="feature-frame"
-          src="invoices/invoices.html"
-          title="Invoices">
-        </iframe>
+    const totalProducts =
+      products.length;
 
-      </section>
 
+    let stockProducts = 0;
+    let lowStockProducts = 0;
+    let outStockProducts = 0;
 
-      <!-- Reports -->
-      <section class="page feature-page" id="reports">
 
-        <iframe
-          class="feature-frame"
-          src="reports/reports.html"
-          title="Reports">
-        </iframe>
+    products.forEach(product => {
 
-      </section>
+      const stock =
+        Number(product.stock) || 0;
 
+      if (stock <= 0) {
 
-      <!-- Settings -->
-      <section class="page feature-page" id="settings">
+        outStockProducts++;
 
-        <iframe
-          class="feature-frame"
-          src="settings/settings.html"
-          title="Settings">
-        </iframe>
+      } else {
 
-      </section>
+        stockProducts++;
 
-    </main>
+        if (stock <= 5) {
+          lowStockProducts++;
+        }
 
-  </div>
+      }
 
+    });
 
-  <script src="script.js"></script>
 
-</body>
-</html>
+    // ----------------------------------------
+    // SALES
+    // ----------------------------------------
+
+    const today =
+      getToday();
+
+
+    let todaySalesAmount = 0;
+    let totalProfit = 0;
+
+
+    sales.forEach(sale => {
+
+      const total =
+        Number(sale.total) || 0;
+
+      const profit =
+        Number(sale.profit) || 0;
+
+
+      if (getSaleDate(sale) === today) {
+
+        todaySalesAmount += total;
+
+      }
+
+
+      totalProfit += profit;
+
+    });
+
+
+    // ----------------------------------------
+    // UPDATE HTML
+    // ----------------------------------------
+
+    const todaySales =
+      document.getElementById("todaySales");
+
+    const totalProductsElement =
+      document.getElementById("totalProducts");
+
+    const totalCustomers =
+      document.getElementById("totalCustomers");
+
+    const totalProfitElement =
+      document.getElementById("totalProfit");
+
+    const stockProductsElement =
+      document.getElementById("stockProducts");
+
+    const lowStockProductsElement =
+      document.getElementById("lowStockProducts");
+
+    const outStockProductsElement =
+      document.getElementById("outStockProducts");
+
+
+    if (todaySales) {
+
+      todaySales.textContent =
+        "Rs. " +
+        todaySalesAmount.toLocaleString();
+
+    }
+
+
+    if (totalProductsElement) {
+
+      totalProductsElement.textContent =
+        totalProducts;
+
+    }
+
+
+    if (totalCustomers) {
+
+      totalCustomers.textContent =
+        customers.length;
+
+    }
+
+
+    if (totalProfitElement) {
+
+      totalProfitElement.textContent =
+        "Rs. " +
+        totalProfit.toLocaleString();
+
+    }
+
+
+    if (stockProductsElement) {
+
+      stockProductsElement.textContent =
+        stockProducts;
+
+    }
+
+
+    if (lowStockProductsElement) {
+
+      lowStockProductsElement.textContent =
+        lowStockProducts;
+
+    }
+
+
+    if (outStockProductsElement) {
+
+      outStockProductsElement.textContent =
+        outStockProducts;
+
+    }
+
+  }
+
+
+  // ------------------------------------------
+  // REFRESH DASHBOARD
+  // ------------------------------------------
+
+  updateDashboard();
+
+
+  // Refresh dashboard whenever the user
+  // returns to the dashboard.
+
+  navItems.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      if (button.dataset.page === "dashboard") {
+        updateDashboard();
+      }
+
+    });
+
+  });
+
+
+  // ------------------------------------------
+  // NOTIFICATIONS
+  // ------------------------------------------
+
+  const notificationButton =
+    document.querySelector(".icon-button");
+
+
+  if (notificationButton) {
+
+    notificationButton.addEventListener("click", () => {
+
+      const products =
+        getArray("shopManagerProducts");
+
+
+      const lowStock =
+        products.filter(product => {
+
+          const stock =
+            Number(product.stock) || 0;
+
+          return stock <= 5;
+
+        });
+
+
+      if (lowStock.length > 0) {
+
+        alert(
+          `You have ${lowStock.length} low-stock or out-of-stock product(s).`
+        );
+
+      } else {
+
+        alert("No new notifications.");
+
+      }
+
+    });
+
+  }
+
+
+  // ------------------------------------------
+  // GLOBAL SHOP MANAGER OBJECT
+  // ------------------------------------------
+
+  window.ShopManager = {
+
+    showPage: showPage,
+
+    updateDashboard: updateDashboard,
+
+    getArray: getArray
+
+  };
+
+
+  // ------------------------------------------
+  // START
+  // ------------------------------------------
+
+  showPage("dashboard");
+
+});
 ```
