@@ -1,6 +1,9 @@
 /* =========================================
    SHOP MANAGER SETTINGS
+   ROBUST VERSION
    ========================================= */
+
+"use strict";
 
 const SETTINGS_KEY = "shopManagerSettings";
 const PRODUCTS_KEY = "shopManagerProducts";
@@ -17,7 +20,24 @@ let pendingBackup = null;
 
 
 /* =========================================
-   BASIC HELPERS
+   DEFAULT SETTINGS
+   ========================================= */
+
+const defaultSettings = {
+  shopName: "",
+  ownerName: "",
+  phone: "",
+  email: "",
+  address: "",
+  currency: "Rs",
+  invoicePrefix: "INV",
+  lowStockThreshold: 5,
+  appearance: "system"
+};
+
+
+/* =========================================
+   HELPERS
    ========================================= */
 
 function readJSON(key, fallback) {
@@ -29,18 +49,27 @@ function readJSON(key, fallback) {
     }
 
     return JSON.parse(value);
+
   } catch (error) {
-    console.error("Could not read:", key, error);
+    console.error("Shop Manager: read error:", key, error);
     return fallback;
   }
 }
 
 
 function writeJSON(key, value) {
-  localStorage.setItem(
-    key,
-    JSON.stringify(value)
-  );
+  try {
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
+
+    return true;
+
+  } catch (error) {
+    console.error("Shop Manager: write error:", key, error);
+    return false;
+  }
 }
 
 
@@ -56,18 +85,20 @@ function getSettings() {
     {}
   );
 
-  return (
+  if (
     value &&
     typeof value === "object" &&
     !Array.isArray(value)
-  )
-    ? value
-    : {};
+  ) {
+    return value;
+  }
+
+  return {};
 }
 
 
 function saveSettings(settings) {
-  writeJSON(
+  return writeJSON(
     SETTINGS_KEY,
     settings
   );
@@ -90,29 +121,14 @@ function formatDate(value) {
 
 
 /* =========================================
-   DEFAULT SETTINGS
-   ========================================= */
-
-const defaultSettings = {
-  shopName: "",
-  ownerName: "",
-  phone: "",
-  email: "",
-  address: "",
-  currency: "Rs",
-  invoicePrefix: "INV",
-  lowStockThreshold: 5,
-  appearance: "system"
-};
-
-
-/* =========================================
    MESSAGE
    ========================================= */
 
 function showMessage(text) {
   const oldMessage =
-    document.querySelector(".settings-message");
+    document.querySelector(
+      ".settings-message"
+    );
 
   if (oldMessage) {
     oldMessage.remove();
@@ -126,19 +142,23 @@ function showMessage(text) {
 
   message.textContent = text;
 
-  message.style.position = "fixed";
-  message.style.left = "50%";
-  message.style.bottom = "25px";
-  message.style.transform = "translateX(-50%)";
-  message.style.zIndex = "99999";
-  message.style.padding = "13px 20px";
-  message.style.borderRadius = "10px";
-  message.style.background = "#172033";
-  message.style.color = "#ffffff";
-  message.style.fontSize = "14px";
-  message.style.fontWeight = "600";
-  message.style.boxShadow =
-    "0 8px 25px rgba(0,0,0,.25)";
+  Object.assign(
+    message.style,
+    {
+      position: "fixed",
+      left: "50%",
+      bottom: "25px",
+      transform: "translateX(-50%)",
+      zIndex: "999999",
+      padding: "13px 20px",
+      borderRadius: "10px",
+      background: "#172033",
+      color: "#ffffff",
+      fontSize: "14px",
+      fontWeight: "600",
+      boxShadow: "0 8px 25px rgba(0,0,0,.25)"
+    }
+  );
 
   document.body.appendChild(message);
 
@@ -256,36 +276,20 @@ function saveShopInformation() {
     ...getSettings()
   };
 
-  const shopName =
-    document.getElementById("shopName");
-
-  const ownerName =
-    document.getElementById("ownerName");
-
-  const shopPhone =
-    document.getElementById("shopPhone");
-
-  const shopEmail =
-    document.getElementById("shopEmail");
-
-  const shopAddress =
-    document.getElementById("shopAddress");
-
-
   settings.shopName =
-    shopName ? shopName.value.trim() : "";
+    document.getElementById("shopName")?.value.trim() || "";
 
   settings.ownerName =
-    ownerName ? ownerName.value.trim() : "";
+    document.getElementById("ownerName")?.value.trim() || "";
 
   settings.phone =
-    shopPhone ? shopPhone.value.trim() : "";
+    document.getElementById("shopPhone")?.value.trim() || "";
 
   settings.email =
-    shopEmail ? shopEmail.value.trim() : "";
+    document.getElementById("shopEmail")?.value.trim() || "";
 
   settings.address =
-    shopAddress ? shopAddress.value.trim() : "";
+    document.getElementById("shopAddress")?.value.trim() || "";
 
 
   saveSettings(settings);
@@ -308,31 +312,19 @@ function saveBusinessSettings() {
     ...getSettings()
   };
 
-  const currency =
-    document.getElementById("currency");
-
-  const invoicePrefix =
-    document.getElementById("invoicePrefix");
-
-  const lowStockThreshold =
-    document.getElementById("lowStockThreshold");
-
-
   settings.currency =
-    currency
-      ? currency.value
-      : "Rs";
+    document.getElementById("currency")?.value || "Rs";
 
   settings.invoicePrefix =
-    invoicePrefix
-      ? invoicePrefix.value.trim() || "INV"
-      : "INV";
+    document.getElementById("invoicePrefix")?.value.trim() || "INV";
 
 
   let threshold =
-    lowStockThreshold
-      ? Number(lowStockThreshold.value)
-      : 5;
+    Number(
+      document.getElementById(
+        "lowStockThreshold"
+      )?.value
+    );
 
   if (
     !Number.isFinite(threshold) ||
@@ -408,54 +400,35 @@ function saveAppearance(mode) {
    ========================================= */
 
 function updateBackupSummary() {
-  const products =
-    getArray(PRODUCTS_KEY);
-
-  const sales =
-    getArray(SALES_KEY);
-
-  const customers =
-    getArray(CUSTOMERS_KEY);
-
-  const expenses =
-    getArray(EXPENSES_KEY);
-
-  const invoices =
-    getArray(INVOICES_KEY);
-
-  const inventory =
-    getArray(INVENTORY_KEY);
-
-
-  const elements = {
+  const values = {
     backupProductsCount:
-      products.length,
+      getArray(PRODUCTS_KEY).length,
 
     backupSalesCount:
-      sales.length,
+      getArray(SALES_KEY).length,
 
     backupCustomersCount:
-      customers.length,
+      getArray(CUSTOMERS_KEY).length,
 
     backupExpensesCount:
-      expenses.length,
+      getArray(EXPENSES_KEY).length,
 
     backupInvoicesCount:
-      invoices.length,
+      getArray(INVOICES_KEY).length,
 
     backupInventoryCount:
-      inventory.length
+      getArray(INVENTORY_KEY).length
   };
 
 
-  Object.keys(elements).forEach(
+  Object.keys(values).forEach(
     function (id) {
       const element =
         document.getElementById(id);
 
       if (element) {
         element.textContent =
-          elements[id];
+          values[id];
       }
     }
   );
@@ -492,6 +465,7 @@ function updateBackupStatus() {
 
 
   if (!lastBackup) {
+
     if (title) {
       title.textContent =
         "Your data is stored locally";
@@ -513,6 +487,7 @@ function updateBackupStatus() {
 
   const formatted =
     formatDate(lastBackup);
+
 
   if (title) {
     title.textContent =
@@ -539,6 +514,7 @@ function updateBackupStatus() {
 
 function createBackup() {
   try {
+
     const backup = {
       backupVersion:
         BACKUP_VERSION,
@@ -581,8 +557,7 @@ function createBackup() {
       new Blob(
         [json],
         {
-          type:
-            "application/json"
+          type: "application/json"
         }
       );
 
@@ -628,7 +603,9 @@ function createBackup() {
 
     document.body.removeChild(link);
 
-    URL.revokeObjectURL(url);
+    setTimeout(function () {
+      URL.revokeObjectURL(url);
+    }, 1000);
 
 
     const backupTime =
@@ -647,6 +624,7 @@ function createBackup() {
     );
 
   } catch (error) {
+
     console.error(
       "Backup error:",
       error
@@ -665,8 +643,7 @@ function createBackup() {
 
 function handleImportFile(event) {
   const file =
-    event.target.files &&
-    event.target.files[0];
+    event.target.files?.[0];
 
   if (!file) {
     return;
@@ -679,7 +656,9 @@ function handleImportFile(event) {
 
   reader.onload =
     function () {
+
       try {
+
         const backup =
           JSON.parse(
             reader.result
@@ -706,6 +685,7 @@ function handleImportFile(event) {
         openImportModal();
 
       } catch (error) {
+
         console.error(
           "Import error:",
           error
@@ -723,6 +703,7 @@ function handleImportFile(event) {
 
   reader.onerror =
     function () {
+
       showMessage(
         "Could not read the backup file."
       );
@@ -740,6 +721,7 @@ function handleImportFile(event) {
    ========================================= */
 
 function isValidBackup(backup) {
+
   if (
     !backup ||
     typeof backup !== "object" ||
@@ -749,24 +731,20 @@ function isValidBackup(backup) {
   }
 
 
-  const required =
-    [
-      "products",
-      "sales",
-      "customers",
-      "expenses",
-      "invoices"
-    ];
+  const required = [
+    "products",
+    "sales",
+    "customers",
+    "expenses",
+    "invoices"
+  ];
 
 
-  for (
-    let i = 0;
-    i < required.length;
-    i++
-  ) {
+  for (const key of required) {
+
     if (
       !Array.isArray(
-        backup[required[i]]
+        backup[key]
       )
     ) {
       return false;
@@ -804,7 +782,9 @@ function isValidBackup(backup) {
    ========================================= */
 
 function showImportPreview(backup) {
+
   const values = {
+
     importBackupDate:
       formatDate(
         backup.exportedAt
@@ -840,6 +820,7 @@ function showImportPreview(backup) {
 
   Object.keys(values).forEach(
     function (id) {
+
       const element =
         document.getElementById(id);
 
@@ -857,6 +838,7 @@ function showImportPreview(backup) {
    ========================================= */
 
 function openImportModal() {
+
   const modal =
     document.getElementById(
       "importModal"
@@ -871,6 +853,7 @@ function openImportModal() {
 
 
 function closeImportModal() {
+
   const modal =
     document.getElementById(
       "importModal"
@@ -891,7 +874,9 @@ function closeImportModal() {
    ========================================= */
 
 function restoreBackup() {
+
   if (!pendingBackup) {
+
     showMessage(
       "No backup selected."
     );
@@ -901,7 +886,7 @@ function restoreBackup() {
 
 
   const confirmed =
-    confirm(
+    window.confirm(
       "Restore this backup?\n\n" +
       "Your current Shop Manager data will be replaced."
     );
@@ -913,6 +898,7 @@ function restoreBackup() {
 
 
   try {
+
     writeJSON(
       PRODUCTS_KEY,
       pendingBackup.products
@@ -953,8 +939,8 @@ function restoreBackup() {
       ...(pendingBackup.settings || {})
     };
 
-    saveSettings(settings);
 
+    saveSettings(settings);
 
     closeImportModal();
 
@@ -969,6 +955,7 @@ function restoreBackup() {
     );
 
   } catch (error) {
+
     console.error(
       "Restore error:",
       error
@@ -982,12 +969,13 @@ function restoreBackup() {
 
 
 /* =========================================
-   RESET EVERYTHING
+   RESET ALL DATA
    ========================================= */
 
 function resetAllData() {
+
   const first =
-    confirm(
+    window.confirm(
       "WARNING!\n\n" +
       "This will delete all Shop Manager data from this device.\n\n" +
       "Continue?"
@@ -1000,7 +988,7 @@ function resetAllData() {
 
 
   const second =
-    confirm(
+    window.confirm(
       "FINAL CONFIRMATION\n\n" +
       "Products, sales, customers, expenses, invoices and inventory history will be deleted.\n\n" +
       "Are you absolutely sure?"
@@ -1059,58 +1047,70 @@ function resetAllData() {
 
 
 /* =========================================
-   REFRESH MAIN DASHBOARD
+   REFRESH DASHBOARD
    ========================================= */
 
 function refreshParent() {
+
   try {
-    window.parent.postMessage(
-      {
-        type:
-          "shopManagerRefresh"
-      },
-      "*"
-    );
+
+    if (
+      window.parent &&
+      window.parent !== window
+    ) {
+
+      window.parent.postMessage(
+        {
+          type:
+            "shopManagerRefresh"
+        },
+        "*"
+      );
+
+
+      window.parent.postMessage(
+        {
+          type:
+            "shopManagerDataChanged"
+        },
+        "*"
+      );
+    }
+
   } catch (error) {
+
     console.log(
       "Parent refresh unavailable."
-    );
-  }
-
-
-  try {
-    window.parent.postMessage(
-      {
-        type:
-          "shopManagerDataChanged"
-      },
-      "*"
-    );
-  } catch (error) {
-    console.log(
-      "Data change message unavailable."
     );
   }
 }
 
 
 /* =========================================
-   BUTTON EVENTS
+   SETUP BUTTON EVENTS
    ========================================= */
 
 function setupEvents() {
 
-  /* Shop form */
+  console.log(
+    "Shop Manager Settings: attaching events..."
+  );
+
+
+  /* SHOP FORM */
 
   const shopForm =
     document.getElementById(
       "shopForm"
     );
 
+
   if (shopForm) {
+
     shopForm.addEventListener(
       "submit",
       function (event) {
+
         event.preventDefault();
 
         saveShopInformation();
@@ -1119,24 +1119,29 @@ function setupEvents() {
   }
 
 
-  /* Business settings */
+  /* SAVE BUSINESS */
 
   const businessButton =
     document.getElementById(
       "saveBusinessSettings"
     );
 
+
   if (businessButton) {
+
     businessButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         saveBusinessSettings();
       }
     );
   }
 
 
-  /* Appearance */
+  /* APPEARANCE */
 
   const appearanceButtons =
     document.querySelectorAll(
@@ -1146,9 +1151,11 @@ function setupEvents() {
 
   appearanceButtons.forEach(
     function (radio) {
+
       radio.addEventListener(
         "change",
         function () {
+
           saveAppearance(
             this.value
           );
@@ -1158,31 +1165,38 @@ function setupEvents() {
   );
 
 
-  /* Export */
+  /* EXPORT */
 
   const exportButton =
     document.getElementById(
       "exportDataBtn"
     );
 
+
   if (exportButton) {
+
     exportButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         createBackup();
       }
     );
   }
 
 
-  /* Import */
+  /* IMPORT */
 
   const importInput =
     document.getElementById(
       "importDataInput"
     );
 
+
   if (importInput) {
+
     importInput.addEventListener(
       "change",
       handleImportFile
@@ -1190,85 +1204,108 @@ function setupEvents() {
   }
 
 
-  /* Close modal */
+  /* CLOSE IMPORT */
 
   const closeButton =
     document.getElementById(
       "closeImportModal"
     );
 
+
   if (closeButton) {
+
     closeButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         closeImportModal();
       }
     );
   }
 
 
-  /* Cancel import */
+  /* CANCEL IMPORT */
 
   const cancelButton =
     document.getElementById(
       "cancelImportBtn"
     );
 
+
   if (cancelButton) {
+
     cancelButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         closeImportModal();
       }
     );
   }
 
 
-  /* Restore */
+  /* RESTORE */
 
   const restoreButton =
     document.getElementById(
       "confirmImportBtn"
     );
 
+
   if (restoreButton) {
+
     restoreButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         restoreBackup();
       }
     );
   }
 
 
-  /* Reset */
+  /* RESET */
 
   const resetButton =
     document.getElementById(
       "resetDataBtn"
     );
 
+
   if (resetButton) {
+
     resetButton.addEventListener(
       "click",
-      function () {
+      function (event) {
+
+        event.preventDefault();
+
         resetAllData();
       }
     );
   }
 
 
-  /* Close modal by clicking outside */
+  /* CLOSE MODAL WHEN CLICKING OUTSIDE */
 
   const modal =
     document.getElementById(
       "importModal"
     );
 
+
   if (modal) {
+
     modal.addEventListener(
       "click",
       function (event) {
+
         if (
           event.target === modal
         ) {
@@ -1279,11 +1316,12 @@ function setupEvents() {
   }
 
 
-  /* Escape */
+  /* ESCAPE */
 
   document.addEventListener(
     "keydown",
     function (event) {
+
       if (
         event.key === "Escape"
       ) {
@@ -1291,14 +1329,24 @@ function setupEvents() {
       }
     }
   );
+
+
+  console.log(
+    "Shop Manager Settings: events attached successfully."
+  );
 }
 
 
 /* =========================================
-   SYSTEM DARK MODE
+   SYSTEM THEME
    ========================================= */
 
-if (window.matchMedia) {
+function setupSystemThemeListener() {
+
+  if (!window.matchMedia) {
+    return;
+  }
+
 
   const media =
     window.matchMedia(
@@ -1308,13 +1356,16 @@ if (window.matchMedia) {
 
   const systemThemeChanged =
     function () {
+
       const settings =
         getSettings();
+
 
       if (
         settings.appearance ===
         "system"
       ) {
+
         applyAppearance(
           "system"
         );
@@ -1325,14 +1376,18 @@ if (window.matchMedia) {
   if (
     media.addEventListener
   ) {
+
     media.addEventListener(
       "change",
       systemThemeChanged
     );
+
   } else if (
     media.addListener
   ) {
+
     media.addListener(
+      "change",
       systemThemeChanged
     );
   }
@@ -1340,10 +1395,43 @@ if (window.matchMedia) {
 
 
 /* =========================================
+   GLOBAL FALLBACK FUNCTIONS
+   ========================================= */
+
+window.saveShopInformation =
+  saveShopInformation;
+
+window.saveBusinessSettings =
+  saveBusinessSettings;
+
+window.saveAppearance =
+  saveAppearance;
+
+window.createBackup =
+  createBackup;
+
+window.handleImportFile =
+  handleImportFile;
+
+window.openImportModal =
+  openImportModal;
+
+window.closeImportModal =
+  closeImportModal;
+
+window.restoreBackup =
+  restoreBackup;
+
+window.resetAllData =
+  resetAllData;
+
+
+/* =========================================
    PUBLIC API
    ========================================= */
 
 window.ShopManagerSettings = {
+
   getSettings:
     getSettings,
 
@@ -1357,21 +1445,56 @@ window.ShopManagerSettings = {
     createBackup,
 
   resetAllData:
-    resetAllData
+    resetAllData,
+
+  refresh:
+    function () {
+      loadSettings();
+      updateBackupSummary();
+    }
 };
 
 
 /* =========================================
-   START APP
+   START
    ========================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  function () {
-    loadSettings();
+function startSettings() {
 
-    setupEvents();
+  console.log(
+    "SHOP MANAGER SETTINGS JS LOADED"
+  );
 
-    updateBackupSummary();
-  }
-);
+  loadSettings();
+
+  setupEvents();
+
+  updateBackupSummary();
+
+  setupSystemThemeListener();
+
+  console.log(
+    "SHOP MANAGER SETTINGS READY"
+  );
+}
+
+
+/*
+   Works whether this file is loaded
+   before or after DOM parsing.
+*/
+
+if (
+  document.readyState === "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    startSettings
+  );
+
+} else {
+
+  startSettings();
+}
+```
