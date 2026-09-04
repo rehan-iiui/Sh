@@ -1,298 +1,358 @@
-// ==========================================
-// SHOP MANAGER - MAIN JAVASCRIPT
-// ==========================================
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-document.addEventListener("DOMContentLoaded", () => {
+  <title>Shop Manager</title>
 
-  // ------------------------------------------
-  // PAGE INFORMATION
-  // ------------------------------------------
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  const pageInfo = {
-    dashboard: {
-      title: "Dashboard",
-      subtitle: "Welcome to your shop"
-    },
+<body>
 
-    products: {
-      title: "Products",
-      subtitle: "Manage your shop products"
-    },
+  <div class="app">
 
-    sales: {
-      title: "Sales",
-      subtitle: "Track your sales and transactions"
-    },
+    <!-- Sidebar -->
+    <aside class="sidebar">
 
-    customers: {
-      title: "Customers",
-      subtitle: "Manage your customers"
-    },
+      <div class="logo">
+        <div class="logo-icon">S</div>
 
-    expenses: {
-      title: "Expenses",
-      subtitle: "Track your business expenses"
-    },
+        <div>
+          <h2>Shop Manager</h2>
+          <p>Business Center</p>
+        </div>
+      </div>
 
-    invoices: {
-      title: "Invoices",
-      subtitle: "Create and manage invoices"
-    },
+      <nav class="navigation">
 
-    reports: {
-      title: "Reports",
-      subtitle: "View your business performance"
-    },
+        <button class="nav-item active" data-page="dashboard">
+          <span>📊</span>
+          Dashboard
+        </button>
 
-    settings: {
-      title: "Settings",
-      subtitle: "Manage your shop settings"
-    }
-  };
+        <button class="nav-item" data-page="products">
+          <span>📦</span>
+          Products
+        </button>
 
+        <button class="nav-item" data-page="sales">
+          <span>💰</span>
+          Sales
+        </button>
 
-  // ------------------------------------------
-  // ELEMENTS
-  // ------------------------------------------
+        <button class="nav-item" data-page="customers">
+          <span>👥</span>
+          Customers
+        </button>
 
-  const navItems = document.querySelectorAll(".nav-item[data-page]");
-  const pages = document.querySelectorAll(".page");
-  const pageTitle = document.getElementById("pageTitle");
-  const pageSubtitle = document.getElementById("pageSubtitle");
+        <button class="nav-item" data-page="expenses">
+          <span>💳</span>
+          Expenses
+        </button>
 
+        <button class="nav-item" data-page="invoices">
+          <span>🧾</span>
+          Invoices
+        </button>
 
-  // ------------------------------------------
-  // SHOW PAGE FUNCTION
-  // ------------------------------------------
+        <button class="nav-item" data-page="reports">
+          <span>📈</span>
+          Reports
+        </button>
 
-  function showPage(pageId) {
+      </nav>
 
-    // Hide every page
-    pages.forEach(page => {
-      page.classList.remove("active-page");
-    });
+      <div class="sidebar-bottom">
 
-    // Show selected page
-    const selectedPage = document.getElementById(pageId);
+        <button class="nav-item" data-page="settings">
+          <span>⚙️</span>
+          Settings
+        </button>
 
-    if (selectedPage) {
-      selectedPage.classList.add("active-page");
-    }
+      </div>
 
+    </aside>
 
-    // Update active navigation button
-    navItems.forEach(button => {
-      button.classList.remove("active");
 
-      if (button.dataset.page === pageId) {
-        button.classList.add("active");
-      }
-    });
+    <!-- Main Area -->
+    <main class="main">
 
+      <!-- Top Bar -->
+      <header class="topbar">
 
-    // Update title and subtitle
-    if (pageInfo[pageId]) {
-      pageTitle.textContent = pageInfo[pageId].title;
-      pageSubtitle.textContent = pageInfo[pageId].subtitle;
-    }
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Welcome to your shop</p>
+        </div>
 
+        <div class="top-actions">
 
-    // Scroll to top
-    document.querySelector(".main").scrollTop = 0;
-  }
+          <button class="icon-button" title="Notifications">
+            🔔
+          </button>
 
+          <div class="profile">
 
-  // ------------------------------------------
-  // SIDEBAR NAVIGATION
-  // ------------------------------------------
+            <div class="profile-avatar">SM</div>
 
-  navItems.forEach(button => {
+            <div class="profile-info">
+              <strong>Shop Owner</strong>
+              <span>Administrator</span>
+            </div>
 
-    button.addEventListener("click", () => {
+          </div>
 
-      const pageId = button.dataset.page;
+        </div>
 
-      showPage(pageId);
+      </header>
 
-    });
 
-  });
+      <!-- Dashboard -->
+      <section class="page active-page" id="dashboard">
 
+        <div class="welcome-card">
 
-  // ------------------------------------------
-  // "VIEW ALL" / OTHER PAGE BUTTONS
-  // ------------------------------------------
+          <div>
+            <p class="small-label">SHOP OVERVIEW</p>
 
-  const pageTargetButtons =
-    document.querySelectorAll("[data-page-target]");
+            <h2>Good day! 👋</h2>
 
-  pageTargetButtons.forEach(button => {
+            <p>Manage your shop from one place.</p>
+          </div>
 
-    button.addEventListener("click", () => {
+          <button class="primary-button" id="quickSaleButton">
+            + New Sale
+          </button>
 
-      const pageId = button.dataset.pageTarget;
+        </div>
 
-      showPage(pageId);
 
-    });
+        <!-- Statistics -->
+        <div class="stats-grid">
 
-  });
+          <div class="stat-card">
 
+            <div class="stat-icon">💰</div>
 
-  // ------------------------------------------
-  // QUICK SALE BUTTONS
-  // ------------------------------------------
+            <div>
+              <span>Today's Sales</span>
+              <strong id="todaySales">Rs. 0</strong>
+            </div>
 
-  const quickSaleButton =
-    document.getElementById("quickSaleButton");
+          </div>
 
-  const emptySaleButton =
-    document.getElementById("emptySaleButton");
 
+          <div class="stat-card">
 
-  function openSalesPage() {
+            <div class="stat-icon">📦</div>
 
-    showPage("sales");
+            <div>
+              <span>Total Products</span>
+              <strong id="totalProducts">0</strong>
+            </div>
 
-  }
+          </div>
 
 
-  if (quickSaleButton) {
-    quickSaleButton.addEventListener("click", openSalesPage);
-  }
+          <div class="stat-card">
 
+            <div class="stat-icon">👥</div>
 
-  if (emptySaleButton) {
-    emptySaleButton.addEventListener("click", openSalesPage);
-  }
+            <div>
+              <span>Customers</span>
+              <strong id="totalCustomers">0</strong>
+            </div>
 
+          </div>
 
-  // ------------------------------------------
-  // START ON DASHBOARD
-  // ------------------------------------------
 
-  showPage("dashboard");
+          <div class="stat-card">
 
+            <div class="stat-icon">📈</div>
 
-  // ------------------------------------------
-  // TEMPORARY DASHBOARD DATA
-  // ------------------------------------------
-  // These values will later be connected
-  // to our Products, Sales and Customer systems.
+            <div>
+              <span>Profit</span>
+              <strong id="totalProfit">Rs. 0</strong>
+            </div>
 
-  const shopData = {
-    todaySales: 0,
-    totalProducts: 0,
-    totalCustomers: 0,
-    totalProfit: 0,
-    stockProducts: 0,
-    lowStockProducts: 0,
-    outStockProducts: 0
-  };
+          </div>
 
+        </div>
 
-  // ------------------------------------------
-  // UPDATE DASHBOARD
-  // ------------------------------------------
 
-  function updateDashboard() {
+        <!-- Dashboard Content -->
+        <div class="dashboard-grid">
 
-    const todaySales =
-      document.getElementById("todaySales");
+          <div class="panel">
 
-    const totalProducts =
-      document.getElementById("totalProducts");
+            <div class="panel-header">
 
-    const totalCustomers =
-      document.getElementById("totalCustomers");
+              <div>
+                <h3>Recent Sales</h3>
+                <p>Your latest transactions</p>
+              </div>
 
-    const totalProfit =
-      document.getElementById("totalProfit");
+              <button class="text-button" data-page-target="sales">
+                View All
+              </button>
 
-    const stockProducts =
-      document.getElementById("stockProducts");
+            </div>
 
-    const lowStockProducts =
-      document.getElementById("lowStockProducts");
 
-    const outStockProducts =
-      document.getElementById("outStockProducts");
+            <div class="empty-state">
 
+              <div class="empty-icon">🧾</div>
 
-    if (todaySales) {
-      todaySales.textContent =
-        "Rs. " + shopData.todaySales.toLocaleString();
-    }
+              <h3>No sales yet</h3>
 
-    if (totalProducts) {
-      totalProducts.textContent =
-        shopData.totalProducts;
-    }
+              <p>
+                Your recent sales will appear here.
+              </p>
 
-    if (totalCustomers) {
-      totalCustomers.textContent =
-        shopData.totalCustomers;
-    }
+              <button class="primary-button" id="emptySaleButton">
+                Create First Sale
+              </button>
 
-    if (totalProfit) {
-      totalProfit.textContent =
-        "Rs. " + shopData.totalProfit.toLocaleString();
-    }
+            </div>
 
-    if (stockProducts) {
-      stockProducts.textContent =
-        shopData.stockProducts;
-    }
+          </div>
 
-    if (lowStockProducts) {
-      lowStockProducts.textContent =
-        shopData.lowStockProducts;
-    }
 
-    if (outStockProducts) {
-      outStockProducts.textContent =
-        shopData.outStockProducts;
-    }
+          <div class="panel">
 
-  }
+            <div class="panel-header">
 
+              <div>
+                <h3>Inventory Status</h3>
+                <p>Quick stock overview</p>
+              </div>
 
-  updateDashboard();
+              <button class="text-button" data-page-target="products">
+                Manage
+              </button>
 
+            </div>
 
-  // ------------------------------------------
-  // NOTIFICATION BUTTON
-  // ------------------------------------------
 
-  const notificationButton =
-    document.querySelector(".icon-button");
+            <div class="inventory-summary">
 
-  if (notificationButton) {
+              <div class="inventory-row">
+                <span>Products in Stock</span>
+                <strong id="stockProducts">0</strong>
+              </div>
 
-    notificationButton.addEventListener("click", () => {
+              <div class="inventory-row">
+                <span>Low Stock</span>
+                <strong id="lowStockProducts">0</strong>
+              </div>
 
-      alert("No new notifications.");
+              <div class="inventory-row">
+                <span>Out of Stock</span>
+                <strong id="outStockProducts">0</strong>
+              </div>
 
-    });
+            </div>
 
-  }
+          </div>
 
+        </div>
 
-  // ------------------------------------------
-  // GLOBAL SHOP MANAGER OBJECT
-  // ------------------------------------------
-  // Later our feature folders can use this.
+      </section>
 
-  window.ShopManager = {
 
-    data: shopData,
+      <!-- Products -->
+      <section class="page feature-page" id="products">
 
-    showPage: showPage,
+        <iframe
+          class="feature-frame"
+          src="products/products.html"
+          title="Products">
+        </iframe>
 
-    updateDashboard: updateDashboard
+      </section>
 
-  };
 
+      <!-- Sales -->
+      <section class="page feature-page" id="sales">
 
-});
+        <iframe
+          class="feature-frame"
+          src="sales/sales.html"
+          title="Sales">
+        </iframe>
+
+      </section>
+
+
+      <!-- Customers -->
+      <section class="page feature-page" id="customers">
+
+        <iframe
+          class="feature-frame"
+          src="customers/customers.html"
+          title="Customers">
+        </iframe>
+
+      </section>
+
+
+      <!-- Expenses -->
+      <section class="page feature-page" id="expenses">
+
+        <iframe
+          class="feature-frame"
+          src="expenses/expenses.html"
+          title="Expenses">
+        </iframe>
+
+      </section>
+
+
+      <!-- Invoices -->
+      <section class="page feature-page" id="invoices">
+
+        <iframe
+          class="feature-frame"
+          src="invoices/invoices.html"
+          title="Invoices">
+        </iframe>
+
+      </section>
+
+
+      <!-- Reports -->
+      <section class="page feature-page" id="reports">
+
+        <iframe
+          class="feature-frame"
+          src="reports/reports.html"
+          title="Reports">
+        </iframe>
+
+      </section>
+
+
+      <!-- Settings -->
+      <section class="page feature-page" id="settings">
+
+        <iframe
+          class="feature-frame"
+          src="settings/settings.html"
+          title="Settings">
+        </iframe>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
 ```
