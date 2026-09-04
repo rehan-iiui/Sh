@@ -1,11 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Sales - Shop Manager</title>
-
   <link rel="stylesheet" href="sales.css">
 </head>
 
@@ -15,53 +15,110 @@
 
     <!-- HEADER -->
 
-    <div class="sales-header">
+    <header class="page-header">
 
       <div>
         <h1>Sales</h1>
-        <p>Create and manage shop sales</p>
+        <p>Track your sales and payments</p>
       </div>
 
-      <button
-        class="new-sale-btn"
-        id="newSaleBtn"
-      >
+      <button class="primary-button" id="newSaleButton">
         + New Sale
       </button>
 
-    </div>
+    </header>
 
 
-    <!-- SALES STATISTICS -->
+    <!-- STATS -->
 
-    <div class="sales-stats">
+    <section class="stats-grid">
 
-      <div class="sales-stat">
-        <span>Today's Sales</span>
-        <strong id="todaySales">Rs. 0</strong>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div>
+          <span>Today's Sales</span>
+          <strong id="todaySales">Rs 0</strong>
+        </div>
       </div>
 
-      <div class="sales-stat">
-        <span>Total Orders</span>
-        <strong id="totalOrders">0</strong>
+      <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div>
+          <span>Total Orders</span>
+          <strong id="totalOrders">0</strong>
+        </div>
       </div>
 
-      <div class="sales-stat">
-        <span>Items Sold</span>
-        <strong id="itemsSold">0</strong>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+          <span>Items Sold</span>
+          <strong id="itemsSold">0</strong>
+        </div>
       </div>
 
-      <div class="sales-stat">
-        <span>Total Profit</span>
-        <strong id="totalProfit">Rs. 0</strong>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div>
+          <span>Total Profit</span>
+          <strong id="totalProfit">Rs 0</strong>
+        </div>
       </div>
 
-    </div>
+    </section>
 
 
-    <!-- RECENT SALES -->
+    <!-- PAYMENT SUMMARY -->
 
-    <div class="sales-panel">
+    <section class="payment-summary-grid">
+
+      <div class="payment-summary-card paid-card">
+
+        <div class="payment-summary-icon">
+          ✅
+        </div>
+
+        <div>
+          <span>Paid</span>
+          <strong id="paidAmount">Rs 0</strong>
+        </div>
+
+      </div>
+
+
+      <div class="payment-summary-card partial-card">
+
+        <div class="payment-summary-icon">
+          🟠
+        </div>
+
+        <div>
+          <span>Partially Paid</span>
+          <strong id="partialAmount">Rs 0</strong>
+        </div>
+
+      </div>
+
+
+      <div class="payment-summary-card unpaid-card">
+
+        <div class="payment-summary-icon">
+          🔴
+        </div>
+
+        <div>
+          <span>Unpaid</span>
+          <strong id="unpaidAmount">Rs 0</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SALES PANEL -->
+
+    <section class="panel">
 
       <div class="panel-header">
 
@@ -72,11 +129,11 @@
 
         <div class="search-box">
 
-          🔎
+          <span>🔎</span>
 
           <input
-            type="text"
-            id="saleSearch"
+            type="search"
+            id="searchInput"
             placeholder="Search sales..."
           >
 
@@ -85,19 +142,24 @@
       </div>
 
 
-      <div class="sales-table-container">
+      <!-- SALES TABLE -->
+
+      <div class="table-wrapper">
 
         <table>
 
           <thead>
 
             <tr>
-              <th>Sale ID</th>
+
               <th>Date</th>
+              <th>Customer</th>
               <th>Items</th>
               <th>Total</th>
-              <th>Profit</th>
+              <th>Payment</th>
+              <th>Balance</th>
               <th>Action</th>
+
             </tr>
 
           </thead>
@@ -105,101 +167,212 @@
 
           <tbody id="salesTableBody">
 
-            <tr id="emptySalesRow">
-
-              <td colspan="6">
-
-                <div class="empty-sales">
-
-                  <div class="empty-sales-icon">
-                    💰
-                  </div>
-
-                  <h2>No sales yet</h2>
-
-                  <p>
-                    Your completed sales will appear here.
-                  </p>
-
-                  <button
-                    class="new-sale-btn"
-                    id="emptyNewSaleBtn"
-                  >
-                    + Create First Sale
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
-
           </tbody>
 
         </table>
 
-      </div>
 
-    </div>
+        <div
+          class="empty-state"
+          id="emptyState"
+          style="display:none;"
+        >
 
-
-    <!-- NEW SALE MODAL -->
-
-    <div
-      class="modal"
-      id="saleModal"
-    >
-
-      <div class="modal-box">
-
-        <div class="modal-header">
-
-          <div>
-            <h2>New Sale</h2>
-            <p>Add products to this sale</p>
+          <div class="empty-icon">
+            🧾
           </div>
 
+          <h3>
+            No sales found
+          </h3>
+
+          <p>
+            Create your first sale to see it here.
+          </p>
+
           <button
-            class="close-btn"
-            id="closeSaleModal"
+            class="primary-button"
+            id="emptyNewSaleButton"
           >
-            ×
+            + New Sale
           </button>
 
         </div>
 
+      </div>
 
-        <!-- CUSTOMER -->
+    </section>
 
-        <div class="customer-section">
+  </div>
 
-          <label for="customerName">
-            Customer Name
+
+  <!-- ==========================================
+       NEW SALE MODAL
+       ========================================== -->
+
+  <div
+    class="modal"
+    id="saleModal"
+  >
+
+    <div class="modal-content sale-modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            New Sale
+          </h2>
+
+          <p>
+            Create a new customer sale
+          </p>
+
+        </div>
+
+        <button
+          class="close-button"
+          id="closeSaleModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="form-group">
+
+        <label for="customerName">
+          Customer Name
+        </label>
+
+        <input
+          type="text"
+          id="customerName"
+          placeholder="Walk-in Customer"
+        >
+
+      </div>
+
+
+      <!-- PRODUCT -->
+
+      <div class="sale-product-row">
+
+        <div class="form-group">
+
+          <label for="productSelect">
+            Product
+          </label>
+
+          <select id="productSelect">
+
+            <option value="">
+              Select a product
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group quantity-group">
+
+          <label for="quantityInput">
+            Quantity
           </label>
 
           <input
-            type="text"
-            id="customerName"
-            placeholder="Optional"
+            type="number"
+            id="quantityInput"
+            min="1"
+            value="1"
           >
 
         </div>
 
 
-        <!-- PRODUCT SELECT -->
+        <button
+          class="secondary-button add-item-button"
+          id="addItemButton"
+        >
+          Add Item
+        </button>
 
-        <div class="add-item-section">
+      </div>
+
+
+      <!-- SALE ITEMS -->
+
+      <div class="sale-items-section">
+
+        <div class="section-label">
+          Sale Items
+        </div>
+
+        <div
+          class="sale-items"
+          id="saleItems"
+        >
+
+          <div class="sale-items-empty">
+            No products added yet.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- TOTAL -->
+
+      <div class="sale-total-box">
+
+        <span>
+          Sale Total
+        </span>
+
+        <strong id="saleTotal">
+          Rs 0
+        </strong>
+
+      </div>
+
+
+      <!-- ==========================================
+           PAYMENT SECTION
+           ========================================== -->
+
+      <div class="payment-section">
+
+        <div class="section-label">
+          Payment Details
+        </div>
+
+
+        <div class="payment-fields">
 
           <div class="form-group">
 
-            <label for="saleProduct">
-              Product
+            <label for="paymentStatus">
+              Payment Status
             </label>
 
-            <select id="saleProduct">
+            <select id="paymentStatus">
 
-              <option value="">
-                Select a product
+              <option value="paid">
+                Paid
+              </option>
+
+              <option value="partial">
+                Partially Paid
+              </option>
+
+              <option value="unpaid">
+                Unpaid
               </option>
 
             </select>
@@ -207,81 +380,142 @@
           </div>
 
 
-          <div class="form-group quantity-group">
+          <div
+            class="form-group"
+            id="amountPaidGroup"
+          >
 
-            <label for="saleQuantity">
-              Quantity
+            <label for="amountPaid">
+              Amount Paid
             </label>
 
             <input
               type="number"
-              id="saleQuantity"
-              value="1"
-              min="1"
+              id="amountPaid"
+              min="0"
+              step="0.01"
+              value="0"
+              placeholder="0"
             >
 
           </div>
 
-
-          <button
-            class="add-item-btn"
-            id="addItemBtn"
-          >
-            Add
-          </button>
-
         </div>
 
 
-        <!-- SALE ITEMS -->
+        <!-- PAYMENT PREVIEW -->
 
-        <div class="sale-items">
+        <div
+          class="payment-preview"
+          id="paymentPreview"
+        >
 
-          <h3>Sale Items</h3>
+          <div>
 
-          <div id="saleItemsList">
+            <span>
+              Amount Paid
+            </span>
 
-            <div class="no-items">
-              No products added yet.
-            </div>
+            <strong id="previewPaid">
+              Rs 0
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Remaining Balance
+            </span>
+
+            <strong
+              id="previewBalance"
+              class="balance-zero"
+            >
+              Rs 0
+            </strong>
 
           </div>
 
         </div>
 
+      </div>
 
-        <!-- TOTAL -->
 
-        <div class="sale-total">
+      <!-- ACTIONS -->
 
-          <span>Total</span>
+      <div class="modal-actions">
 
-          <strong id="saleTotal">
-            Rs. 0
-          </strong>
+        <button
+          class="secondary-button"
+          id="cancelSaleButton"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="primary-button"
+          id="completeSaleButton"
+        >
+          Complete Sale
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================
+       VIEW SALE MODAL
+       ========================================== -->
+
+  <div
+    class="modal"
+    id="viewSaleModal"
+  >
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2>
+            Sale Details
+          </h2>
+
+          <p>
+            Transaction information
+          </p>
 
         </div>
 
+        <button
+          class="close-button"
+          id="closeViewSaleModal"
+        >
+          ×
+        </button>
 
-        <!-- ACTIONS -->
+      </div>
 
-        <div class="sale-actions">
 
-          <button
-            class="cancel-btn"
-            id="cancelSaleBtn"
-          >
-            Cancel
-          </button>
+      <div id="viewSaleContent">
 
-          <button
-            class="complete-sale-btn"
-            id="completeSaleBtn"
-          >
-            Complete Sale
-          </button>
+      </div>
 
-        </div>
+
+      <div class="modal-actions">
+
+        <button
+          class="secondary-button"
+          id="closeViewButton"
+        >
+          Close
+        </button>
 
       </div>
 
@@ -293,5 +527,6 @@
   <script src="sales.js"></script>
 
 </body>
+
 </html>
 ```
