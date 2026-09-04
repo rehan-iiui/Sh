@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Customers - Shop Manager</title>
-
   <link rel="stylesheet" href="customers.css">
 </head>
 
@@ -15,53 +14,85 @@
 
     <!-- HEADER -->
 
-    <div class="customers-header">
+    <header class="page-header">
 
       <div>
         <h1>Customers</h1>
-        <p>Manage your shop customers</p>
+        <p>Manage customers and view their purchase history</p>
       </div>
 
-      <button
-        class="add-customer-btn"
-        id="addCustomerBtn"
-      >
+      <button class="primary-button" id="addCustomerButton">
         + Add Customer
       </button>
 
-    </div>
+    </header>
 
 
-    <!-- STATISTICS -->
+    <!-- STATS -->
 
-    <div class="customer-stats">
+    <section class="stats-grid">
 
-      <div class="customer-stat">
-        <span>Total Customers</span>
-        <strong id="totalCustomers">0</strong>
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          👥
+        </div>
+
+        <div>
+          <span>Total Customers</span>
+          <strong id="totalCustomers">0</strong>
+        </div>
+
       </div>
 
-      <div class="customer-stat">
-        <span>Active Customers</span>
-        <strong id="activeCustomers">0</strong>
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          🟢
+        </div>
+
+        <div>
+          <span>Active Customers</span>
+          <strong id="activeCustomers">0</strong>
+        </div>
+
       </div>
 
-      <div class="customer-stat">
-        <span>Total Orders</span>
-        <strong id="customerOrders">0</strong>
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          🧾
+        </div>
+
+        <div>
+          <span>Total Orders</span>
+          <strong id="totalOrders">0</strong>
+        </div>
+
       </div>
 
-      <div class="customer-stat">
-        <span>Total Purchases</span>
-        <strong id="customerPurchases">Rs. 0</strong>
+
+      <div class="stat-card">
+
+        <div class="stat-icon">
+          💰
+        </div>
+
+        <div>
+          <span>Total Purchases</span>
+          <strong id="totalPurchases">Rs 0</strong>
+        </div>
+
       </div>
 
-    </div>
+    </section>
 
 
-    <!-- CUSTOMERS PANEL -->
+    <!-- CUSTOMER SEARCH -->
 
-    <div class="customers-panel">
+    <section class="panel">
 
       <div class="panel-header">
 
@@ -72,11 +103,11 @@
 
         <div class="search-box">
 
-          🔎
+          <span>🔎</span>
 
           <input
-            type="text"
-            id="customerSearch"
+            type="search"
+            id="searchInput"
             placeholder="Search customers..."
           >
 
@@ -85,9 +116,9 @@
       </div>
 
 
-      <!-- TABLE -->
+      <!-- CUSTOMER TABLE -->
 
-      <div class="customers-table-container">
+      <div class="table-wrapper">
 
         <table>
 
@@ -99,188 +130,244 @@
               <th>Email</th>
               <th>Orders</th>
               <th>Total Purchases</th>
+              <th>Balance</th>
               <th>Action</th>
             </tr>
 
           </thead>
 
           <tbody id="customersTableBody">
-
-            <tr>
-
-              <td colspan="6">
-
-                <div class="empty-customers">
-
-                  <div class="empty-customers-icon">
-                    👥
-                  </div>
-
-                  <h2>No customers yet</h2>
-
-                  <p>
-                    Add your first customer to get started.
-                  </p>
-
-                  <button
-                    class="add-customer-btn"
-                    id="emptyAddCustomerBtn"
-                  >
-                    + Add First Customer
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
-
           </tbody>
 
         </table>
+
+
+        <div
+          class="empty-state"
+          id="emptyState"
+          style="display:none;"
+        >
+
+          <div class="empty-icon">
+            👥
+          </div>
+
+          <h3>
+            No customers found
+          </h3>
+
+          <p>
+            Add your first customer to see them here.
+          </p>
+
+          <button
+            class="primary-button"
+            id="emptyAddCustomerButton"
+          >
+            + Add Customer
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <!-- ==========================================
+       ADD / EDIT CUSTOMER MODAL
+       ========================================== -->
+
+  <div
+    class="modal"
+    id="customerModal"
+  >
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2 id="customerModalTitle">
+            Add Customer
+          </h2>
+
+          <p>
+            Enter customer information
+          </p>
+
+        </div>
+
+        <button
+          class="close-button"
+          id="closeCustomerModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- NAME -->
+
+      <div class="form-group">
+
+        <label for="customerName">
+          Full Name
+        </label>
+
+        <input
+          type="text"
+          id="customerName"
+          placeholder="Enter customer name"
+        >
+
+      </div>
+
+
+      <!-- PHONE -->
+
+      <div class="form-group">
+
+        <label for="customerPhone">
+          Phone
+        </label>
+
+        <input
+          type="tel"
+          id="customerPhone"
+          placeholder="Enter phone number"
+        >
+
+      </div>
+
+
+      <!-- EMAIL -->
+
+      <div class="form-group">
+
+        <label for="customerEmail">
+          Email
+        </label>
+
+        <input
+          type="email"
+          id="customerEmail"
+          placeholder="Enter email address"
+        >
+
+      </div>
+
+
+      <!-- ADDRESS -->
+
+      <div class="form-group">
+
+        <label for="customerAddress">
+          Address
+        </label>
+
+        <textarea
+          id="customerAddress"
+          rows="3"
+          placeholder="Enter customer address"
+        ></textarea>
+
+      </div>
+
+
+      <!-- NOTES -->
+
+      <div class="form-group">
+
+        <label for="customerNotes">
+          Notes
+        </label>
+
+        <textarea
+          id="customerNotes"
+          rows="3"
+          placeholder="Optional notes"
+        ></textarea>
+
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      <div class="modal-actions">
+
+        <button
+          class="secondary-button"
+          id="cancelCustomerButton"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="primary-button"
+          id="saveCustomerButton"
+        >
+          Save Customer
+        </button>
 
       </div>
 
     </div>
 
+  </div>
 
-    <!-- ADD / EDIT CUSTOMER MODAL -->
 
-    <div
-      class="modal"
-      id="customerModal"
-    >
+  <!-- ==========================================
+       CUSTOMER DETAILS MODAL
+       ========================================== -->
 
-      <div class="modal-box">
+  <div
+    class="modal"
+    id="customerDetailsModal"
+  >
 
-        <div class="modal-header">
+    <div class="modal-content customer-details-modal">
 
-          <div>
-            <h2 id="customerModalTitle">
-              Add Customer
-            </h2>
+      <div class="modal-header">
 
-            <p>
-              Enter customer information
-            </p>
-          </div>
+        <div>
 
-          <button
-            class="close-btn"
-            id="closeCustomerModal"
-          >
-            ×
-          </button>
+          <h2>
+            Customer Details
+          </h2>
+
+          <p>
+            Customer profile and purchase history
+          </p>
 
         </div>
 
+        <button
+          class="close-button"
+          id="closeCustomerDetailsModal"
+        >
+          ×
+        </button>
 
-        <!-- CUSTOMER FORM -->
-
-        <form id="customerForm">
-
-          <div class="form-group">
-
-            <label for="customerFullName">
-              Full Name
-            </label>
-
-            <input
-              type="text"
-              id="customerFullName"
-              placeholder="Enter customer name"
-              required
-            >
-
-          </div>
+      </div>
 
 
-          <div class="form-row">
-
-            <div class="form-group">
-
-              <label for="customerPhone">
-                Phone Number
-              </label>
-
-              <input
-                type="tel"
-                id="customerPhone"
-                placeholder="03XX XXXXXXX"
-              >
-
-            </div>
+      <div id="customerDetailsContent">
+      </div>
 
 
-            <div class="form-group">
+      <div class="modal-actions">
 
-              <label for="customerEmail">
-                Email
-              </label>
-
-              <input
-                type="email"
-                id="customerEmail"
-                placeholder="customer@example.com"
-              >
-
-            </div>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="customerAddress">
-              Address
-            </label>
-
-            <textarea
-              id="customerAddress"
-              rows="3"
-              placeholder="Enter customer address"
-            ></textarea>
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="customerNotes">
-              Notes
-            </label>
-
-            <textarea
-              id="customerNotes"
-              rows="3"
-              placeholder="Optional notes"
-            ></textarea>
-
-          </div>
-
-
-          <!-- FORM ACTIONS -->
-
-          <div class="customer-actions">
-
-            <button
-              type="button"
-              class="cancel-btn"
-              id="cancelCustomerBtn"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              class="save-customer-btn"
-            >
-              Save Customer
-            </button>
-
-          </div>
-
-        </form>
+        <button
+          class="secondary-button"
+          id="closeCustomerDetailsButton"
+        >
+          Close
+        </button>
 
       </div>
 
@@ -292,5 +379,6 @@
   <script src="customers.js"></script>
 
 </body>
+
 </html>
 ```
