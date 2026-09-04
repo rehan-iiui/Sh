@@ -1,17 +1,74 @@
-id="k7m2qp"
+```javascript
 const SETTINGS_KEY = "shopManagerSettings";
+const PRODUCTS_KEY = "shopManagerProducts";
+const SALES_KEY = "shopManagerSales";
+const CUSTOMERS_KEY = "shopManagerCustomers";
+const EXPENSES_KEY = "shopManagerExpenses";
+const INVOICES_KEY = "shopManagerInvoices";
+const INVENTORY_KEY = "shopManagerInventoryHistory";
+const LAST_BACKUP_KEY = "shopManagerLastBackup";
 
-const DATA_KEYS = {
-  products: "shopManagerProducts",
-  sales: "shopManagerSales",
-  customers: "shopManagerCustomers",
-  expenses: "shopManagerExpenses",
-  invoices: "shopManagerInvoices",
-  settings: SETTINGS_KEY
-};
+const BACKUP_VERSION = "2.0";
+
+
+/* ================================
+   HELPERS
+================================ */
+
+function getArray(key) {
+  try {
+    const data = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveArray(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function getSettings() {
+  try {
+    const data = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    return data && typeof data === "object" ? data : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveSettings(settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+function formatDate(dateValue) {
+  if (!dateValue) return "-";
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return date.toLocaleString();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* ================================
+   DEFAULT SETTINGS
+================================ */
 
 const defaultSettings = {
-  shopName: "My Shop",
+  shopName: "",
   ownerName: "",
   phone: "",
   email: "",
@@ -19,285 +76,903 @@ const defaultSettings = {
   currency: "Rs",
   invoicePrefix: "INV",
   lowStockThreshold: 5,
-  theme: "light"
+  appearance: "system"
 };
 
-const $ = (id) => document.getElementById(id);
+
+/* ================================
+   LOAD SETTINGS
+================================ */
 
 function loadSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+  const saved = getSettings();
 
-    return {
-      ...defaultSettings,
-      ...(saved || {})
-    };
-  } catch (error) {
-    return { ...defaultSettings };
-  }
-}
-
-function saveSettings() {
   const settings = {
-    shopName: $("shopName").value.trim(),
-    ownerName: $("ownerName").value.trim(),
-    phone: $("shopPhone").value.trim(),
-    email: $("shopEmail").value.trim(),
-    address: $("shopAddress").value.trim(),
-    currency: $("currency").value,
-    invoicePrefix: $("invoicePrefix").value.trim() || "INV",
-    lowStockThreshold:
-      Math.max(1, Number($("lowStockThreshold").value) || 5),
-    theme:
-      document.querySelector('input[name="theme"]:checked')?.value || "light"
+    ...defaultSettings,
+    ...saved
   };
 
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  document.getElementById("shopName").value =
+    settings.shopName || "";
 
-  applyTheme(settings.theme);
-  showSaveMessage("Settings saved successfully!");
+  document.getElementById("ownerName").value =
+    settings.ownerName || "";
+
+  document.getElementById("shopPhone").value =
+    settings.phone || "";
+
+  document.getElementById("shopEmail").value =
+    settings.email || "";
+
+  document.getElementById("shopAddress").value =
+    settings.address || "";
+
+  document.getElementById("currency").value =
+    settings.currency || "Rs";
+
+  document.getElementById("invoicePrefix").value =
+    settings.invoicePrefix || "INV";
+
+  document.getElementById("lowStockThreshold").value =
+    settings.lowStockThreshold ?? 5;
+
+  const appearance =
+    settings.appearance || "system";
+
+  const appearanceRadio =
+    document.querySelector(
+      `input[name="appearance"][value="${appearance}"]`
+    );
+
+  if (appearanceRadio) {
+    appearanceRadio.checked = true;
+  }
+
+  applyAppearance(appearance);
 }
 
-function loadForm() {
-  const settings = loadSettings();
 
-  $("shopName").value = settings.shopName;
-  $("ownerName").value = settings.ownerName;
-  $("shopPhone").value = settings.phone;
-  $("shopEmail").value = settings.email;
-  $("shopAddress").value = settings.address;
-  $("currency").value = settings.currency;
-  $("invoicePrefix").value = settings.invoicePrefix;
-  $("lowStockThreshold").value = settings.lowStockThreshold;
+/* ================================
+   SHOP INFORMATION
+================================ */
 
-  const themeInput = document.querySelector(
-    `input[name="theme"][value="${settings.theme}"]`
+function saveShopInformation() {
+  const settings = getSettings();
+
+  settings.shopName =
+    document.getElementById("shopName").value.trim();
+
+  settings.ownerName =
+    document.getElementById("ownerName").value.trim();
+
+  settings.phone =
+    document.getElementById("shopPhone").value.trim();
+
+  settings.email =
+    document.getElementById("shopEmail").value.trim();
+
+  settings.address =
+    document.getElementById("shopAddress").value.trim();
+
+  saveSettings(settings);
+
+  showMessage(
+    "Shop information saved successfully."
+  );
+}
+
+
+/* ================================
+   BUSINESS SETTINGS
+================================ */
+
+function saveBusinessSettings() {
+  const settings = getSettings();
+
+  settings.currency =
+    document.getElementById("currency").value;
+
+  settings.invoicePrefix =
+    document
+      .getElementById("invoicePrefix")
+      .value
+      .trim() || "INV";
+
+  settings.lowStockThreshold =
+    Math.max(
+      0,
+      Number(
+        document.getElementById(
+          "lowStockThreshold"
+        ).value
+      ) || 0
+    );
+
+  saveSettings(settings);
+
+  showMessage(
+    "Business settings saved successfully."
   );
 
-  if (themeInput) {
-    themeInput.checked = true;
+  refreshOtherPages();
+}
+
+
+/* ================================
+   APPEARANCE
+================================ */
+
+function applyAppearance(mode) {
+  let dark = false;
+
+  if (mode === "dark") {
+    dark = true;
   }
 
-  applyTheme(settings.theme);
-}
-
-function applyTheme(theme) {
-  if (theme === "dark") {
-    document.documentElement.setAttribute("data-theme", "dark");
-  } else if (theme === "system") {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-    document.documentElement.setAttribute(
-      "data-theme",
-      prefersDark ? "dark" : "light"
-    );
-  } else {
-    document.documentElement.setAttribute("data-theme", "light");
+  if (mode === "system") {
+    dark =
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
   }
+
+  document.body.classList.toggle(
+    "dark-mode",
+    dark
+  );
 }
 
-function showSaveMessage(message) {
-  const messageBox = $("saveMessage");
+function saveAppearance(mode) {
+  const settings = getSettings();
 
-  messageBox.textContent = message;
-  messageBox.classList.add("show");
+  settings.appearance = mode;
 
-  clearTimeout(window.saveMessageTimer);
+  saveSettings(settings);
 
-  window.saveMessageTimer = setTimeout(() => {
-    messageBox.classList.remove("show");
-  }, 2500);
+  applyAppearance(mode);
+
+  refreshOtherPages();
 }
 
-/* EXPORT DATA */
 
-function exportData() {
+/* ================================
+   BACKUP COUNTS
+================================ */
+
+function updateBackupSummary() {
+  const products = getArray(PRODUCTS_KEY);
+  const sales = getArray(SALES_KEY);
+  const customers = getArray(CUSTOMERS_KEY);
+  const expenses = getArray(EXPENSES_KEY);
+  const invoices = getArray(INVOICES_KEY);
+  const inventory = getArray(INVENTORY_KEY);
+
+  document.getElementById(
+    "backupProductsCount"
+  ).textContent = products.length;
+
+  document.getElementById(
+    "backupSalesCount"
+  ).textContent = sales.length;
+
+  document.getElementById(
+    "backupCustomersCount"
+  ).textContent = customers.length;
+
+  document.getElementById(
+    "backupExpensesCount"
+  ).textContent = expenses.length;
+
+  document.getElementById(
+    "backupInvoicesCount"
+  ).textContent = invoices.length;
+
+  document.getElementById(
+    "backupInventoryCount"
+  ).textContent = inventory.length;
+
+  updateBackupStatus();
+}
+
+
+/* ================================
+   BACKUP STATUS
+================================ */
+
+function updateBackupStatus() {
+  const lastBackup =
+    localStorage.getItem(LAST_BACKUP_KEY);
+
+  const timeElement =
+    document.getElementById("lastBackupTime");
+
+  const titleElement =
+    document.getElementById("backupStatusTitle");
+
+  const textElement =
+    document.getElementById("backupStatusText");
+
+  if (!lastBackup) {
+    timeElement.textContent = "Never";
+
+    titleElement.textContent =
+      "Your data is stored locally";
+
+    textElement.textContent =
+      "Create a backup regularly to protect your shop data.";
+
+    return;
+  }
+
+  timeElement.textContent =
+    formatDate(lastBackup);
+
+  titleElement.textContent =
+    "Backup available";
+
+  textElement.textContent =
+    "Your latest backup was created on " +
+    formatDate(lastBackup) +
+    ".";
+}
+
+
+/* ================================
+   CREATE BACKUP
+================================ */
+
+function createBackup() {
   const backup = {
-    app: "Shop Manager",
-    version: "1.0",
+    backupVersion: BACKUP_VERSION,
     exportedAt: new Date().toISOString(),
-    data: {}
+
+    products: getArray(PRODUCTS_KEY),
+    sales: getArray(SALES_KEY),
+    customers: getArray(CUSTOMERS_KEY),
+    expenses: getArray(EXPENSES_KEY),
+    invoices: getArray(INVOICES_KEY),
+    inventoryHistory: getArray(INVENTORY_KEY),
+
+    settings: getSettings()
   };
 
-  Object.entries(DATA_KEYS).forEach(([name, key]) => {
-    const value = localStorage.getItem(key);
+  const json = JSON.stringify(
+    backup,
+    null,
+    2
+  );
 
-    try {
-      backup.data[name] = value ? JSON.parse(value) : [];
-    } catch (error) {
-      backup.data[name] = value;
+  const blob = new Blob(
+    [json],
+    {
+      type: "application/json"
     }
-  });
+  );
 
-  const json = JSON.stringify(backup, null, 2);
-  const blob = new Blob([json], {
-    type: "application/json"
-  });
+  const url =
+    URL.createObjectURL(blob);
 
-  const url = URL.createObjectURL(blob);
+  const datePart =
+    new Date()
+      .toISOString()
+      .slice(0, 10);
 
-  const link = document.createElement("a");
+  const shopName =
+    (getSettings().shopName || "shop-manager")
+      .replace(/[^a-z0-9-_]/gi, "-")
+      .toLowerCase();
+
+  const filename =
+    `${shopName}-backup-${datePart}.json`;
+
+  const link =
+    document.createElement("a");
+
   link.href = url;
-
-  const date = new Date().toISOString().slice(0, 10);
-  link.download = `shop-manager-backup-${date}.json`;
+  link.download = filename;
 
   document.body.appendChild(link);
+
   link.click();
+
   link.remove();
 
   URL.revokeObjectURL(url);
 
-  showSaveMessage("Backup exported successfully!");
+  const now =
+    new Date().toISOString();
+
+  localStorage.setItem(
+    LAST_BACKUP_KEY,
+    now
+  );
+
+  updateBackupStatus();
+
+  showMessage(
+    "Full backup exported successfully."
+  );
 }
 
-/* IMPORT DATA */
 
-function importData() {
-  $("importFile").click();
-}
+/* ================================
+   IMPORT BACKUP
+================================ */
 
-function handleImport(event) {
-  const file = event.target.files[0];
+let pendingBackup = null;
 
-  if (!file) {
-    return;
-  }
+function handleImportFile(event) {
+  const file =
+    event.target.files &&
+    event.target.files[0];
 
-  const reader = new FileReader();
+  if (!file) return;
+
+  const reader =
+    new FileReader();
 
   reader.onload = function () {
     try {
-      const backup = JSON.parse(reader.result);
+      const backup =
+        JSON.parse(reader.result);
 
-      if (
-        !backup ||
-        backup.app !== "Shop Manager" ||
-        !backup.data
-      ) {
-        throw new Error("Invalid backup file");
+      if (!validateBackup(backup)) {
+        throw new Error(
+          "Invalid backup file."
+        );
       }
 
-      const confirmed = confirm(
-        "Import this backup?\n\nExisting Shop Manager data will be replaced."
-      );
+      pendingBackup = backup;
 
-      if (!confirmed) {
-        $("importFile").value = "";
-        return;
-      }
+      showImportPreview(backup);
 
-      Object.entries(DATA_KEYS).forEach(([name, key]) => {
-        if (Object.prototype.hasOwnProperty.call(backup.data, name)) {
-          localStorage.setItem(
-            key,
-            JSON.stringify(backup.data[name])
-          );
-        }
-      });
-
-      loadForm();
-
-      showSaveMessage("Backup imported successfully!");
-
-      setTimeout(() => {
-        location.reload();
-      }, 1200);
+      openImportModal();
 
     } catch (error) {
-      alert(
-        "Could not import this file.\n\nPlease select a valid Shop Manager backup."
+      console.error(error);
+
+      showMessage(
+        "This file is not a valid Shop Manager backup."
       );
     }
 
-    $("importFile").value = "";
+    event.target.value = "";
+  };
+
+  reader.onerror = function () {
+    showMessage(
+      "Could not read the backup file."
+    );
+
+    event.target.value = "";
   };
 
   reader.readAsText(file);
 }
 
-/* RESET DATA */
+
+/* ================================
+   VALIDATE BACKUP
+================================ */
+
+function validateBackup(backup) {
+  if (
+    !backup ||
+    typeof backup !== "object"
+  ) {
+    return false;
+  }
+
+  const requiredArrays = [
+    "products",
+    "sales",
+    "customers",
+    "expenses",
+    "invoices"
+  ];
+
+  for (const key of requiredArrays) {
+    if (!Array.isArray(backup[key])) {
+      return false;
+    }
+  }
+
+  if (
+    backup.inventoryHistory !== undefined &&
+    !Array.isArray(
+      backup.inventoryHistory
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    backup.settings !== undefined &&
+    (
+      typeof backup.settings !== "object" ||
+      Array.isArray(backup.settings)
+    )
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+
+/* ================================
+   IMPORT PREVIEW
+================================ */
+
+function showImportPreview(backup) {
+  document.getElementById(
+    "importBackupDate"
+  ).textContent =
+    formatDate(backup.exportedAt);
+
+  document.getElementById(
+    "importBackupVersion"
+  ).textContent =
+    backup.backupVersion || "1.0";
+
+  document.getElementById(
+    "importProductsCount"
+  ).textContent =
+    backup.products.length;
+
+  document.getElementById(
+    "importSalesCount"
+  ).textContent =
+    backup.sales.length;
+
+  document.getElementById(
+    "importCustomersCount"
+  ).textContent =
+    backup.customers.length;
+
+  document.getElementById(
+    "importExpensesCount"
+  ).textContent =
+    backup.expenses.length;
+
+  document.getElementById(
+    "importInvoicesCount"
+  ).textContent =
+    backup.invoices.length;
+
+  document.getElementById(
+    "importInventoryCount"
+  ).textContent =
+    Array.isArray(
+      backup.inventoryHistory
+    )
+      ? backup.inventoryHistory.length
+      : 0;
+}
+
+
+/* ================================
+   MODAL
+================================ */
+
+function openImportModal() {
+  document
+    .getElementById("importModal")
+    .classList.add("active");
+}
+
+function closeImportModal() {
+  document
+    .getElementById("importModal")
+    .classList.remove("active");
+
+  pendingBackup = null;
+}
+
+
+/* ================================
+   RESTORE BACKUP
+================================ */
+
+function restoreBackup() {
+  if (!pendingBackup) {
+    showMessage(
+      "No backup is selected."
+    );
+
+    return;
+  }
+
+  const confirmed =
+    confirm(
+      "Restore this backup?\n\n" +
+      "Your current Shop Manager data will be replaced."
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    saveArray(
+      PRODUCTS_KEY,
+      pendingBackup.products
+    );
+
+    saveArray(
+      SALES_KEY,
+      pendingBackup.sales
+    );
+
+    saveArray(
+      CUSTOMERS_KEY,
+      pendingBackup.customers
+    );
+
+    saveArray(
+      EXPENSES_KEY,
+      pendingBackup.expenses
+    );
+
+    saveArray(
+      INVOICES_KEY,
+      pendingBackup.invoices
+    );
+
+    saveArray(
+      INVENTORY_KEY,
+      Array.isArray(
+        pendingBackup.inventoryHistory
+      )
+        ? pendingBackup.inventoryHistory
+        : []
+    );
+
+    const restoredSettings = {
+      ...defaultSettings,
+      ...(pendingBackup.settings || {})
+    };
+
+    saveSettings(restoredSettings);
+
+    closeImportModal();
+
+    loadSettings();
+
+    updateBackupSummary();
+
+    refreshOtherPages();
+
+    showMessage(
+      "Backup restored successfully."
+    );
+
+    notifyParent(
+      "shopManagerDataRestored"
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    showMessage(
+      "Could not restore the backup."
+    );
+  }
+}
+
+
+/* ================================
+   RESET ALL DATA
+================================ */
 
 function resetAllData() {
-  const firstConfirm = confirm(
-    "Are you sure you want to reset Shop Manager?\n\nAll products, sales, customers, expenses, invoices and settings will be deleted."
-  );
+  const firstConfirm =
+    confirm(
+      "WARNING!\n\n" +
+      "This will permanently delete all Shop Manager data from this device.\n\n" +
+      "Do you want to continue?"
+    );
 
   if (!firstConfirm) {
     return;
   }
 
-  const secondConfirm = confirm(
-    "This action cannot be undone.\n\nPress OK to permanently delete all Shop Manager data."
-  );
+  const secondConfirm =
+    confirm(
+      "FINAL CONFIRMATION\n\n" +
+      "All products, sales, customers, expenses, invoices and inventory history will be deleted.\n\n" +
+      "Press OK to permanently reset everything."
+    );
 
   if (!secondConfirm) {
     return;
   }
 
-  Object.values(DATA_KEYS).forEach((key) => {
-    localStorage.removeItem(key);
-  });
+  const keysToRemove = [
+    PRODUCTS_KEY,
+    SALES_KEY,
+    CUSTOMERS_KEY,
+    EXPENSES_KEY,
+    INVOICES_KEY,
+    INVENTORY_KEY,
+    LAST_BACKUP_KEY
+  ];
+
+  keysToRemove.forEach(
+    key => localStorage.removeItem(key)
+  );
 
   localStorage.setItem(
     SETTINGS_KEY,
     JSON.stringify(defaultSettings)
   );
 
-  alert("Shop Manager has been reset.");
+  loadSettings();
 
-  location.reload();
-}
+  updateBackupSummary();
 
-/* SYSTEM THEME */
+  refreshOtherPages();
 
-function watchSystemTheme() {
-  const mediaQuery = window.matchMedia(
-    "(prefers-color-scheme: dark)"
+  showMessage(
+    "All Shop Manager data has been reset."
   );
 
-  mediaQuery.addEventListener("change", () => {
-    const settings = loadSettings();
-
-    if (settings.theme === "system") {
-      applyTheme("system");
-    }
-  });
+  notifyParent(
+    "shopManagerDataReset"
+  );
 }
 
-/* EVENTS */
 
-$("saveSettingsBtn").addEventListener("click", saveSettings);
+/* ================================
+   REFRESH OTHER PAGES
+================================ */
 
-$("exportDataBtn").addEventListener("click", exportData);
+function refreshOtherPages() {
+  try {
+    window.parent.postMessage(
+      {
+        type: "shopManagerRefresh"
+      },
+      "*"
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-$("importDataBtn").addEventListener("click", importData);
+function notifyParent(type) {
+  try {
+    window.parent.postMessage(
+      {
+        type
+      },
+      "*"
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-$("importFile").addEventListener("change", handleImport);
 
-$("resetDataBtn").addEventListener("click", resetAllData);
+/* ================================
+   MESSAGE
+================================ */
 
-document.querySelectorAll('input[name="theme"]').forEach((input) => {
-  input.addEventListener("change", () => {
-    applyTheme(input.value);
+function showMessage(message) {
+  const existing =
+    document.querySelector(
+      ".settings-message"
+    );
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const messageBox =
+    document.createElement("div");
+
+  messageBox.className =
+    "settings-message";
+
+  messageBox.textContent = message;
+
+  Object.assign(
+    messageBox.style,
+    {
+      position: "fixed",
+      bottom: "24px",
+      right: "24px",
+      zIndex: "10000",
+      background: "#172033",
+      color: "#ffffff",
+      padding: "13px 18px",
+      borderRadius: "10px",
+      fontSize: "13px",
+      fontWeight: "600",
+      boxShadow:
+        "0 10px 30px rgba(0,0,0,.2)"
+    }
+  );
+
+  document.body.appendChild(
+    messageBox
+  );
+
+  setTimeout(() => {
+    messageBox.remove();
+  }, 3000);
+}
+
+
+/* ================================
+   EVENT LISTENERS
+================================ */
+
+document
+  .getElementById("shopForm")
+  .addEventListener(
+    "submit",
+    function (event) {
+      event.preventDefault();
+      saveShopInformation();
+    }
+  );
+
+
+document
+  .getElementById("saveBusinessSettings")
+  .addEventListener(
+    "click",
+    saveBusinessSettings
+  );
+
+
+document
+  .querySelectorAll(
+    'input[name="appearance"]'
+  )
+  .forEach(radio => {
+    radio.addEventListener(
+      "change",
+      function () {
+        saveAppearance(
+          this.value
+        );
+      }
+    );
   });
-});
 
-/* INITIALIZE */
 
-loadForm();
-watchSystemTheme();
+document
+  .getElementById("exportDataBtn")
+  .addEventListener(
+    "click",
+    createBackup
+  );
 
-/* PUBLIC API */
+
+document
+  .getElementById("importDataInput")
+  .addEventListener(
+    "change",
+    handleImportFile
+  );
+
+
+document
+  .getElementById("closeImportModal")
+  .addEventListener(
+    "click",
+    closeImportModal
+  );
+
+
+document
+  .getElementById("cancelImportBtn")
+  .addEventListener(
+    "click",
+    closeImportModal
+  );
+
+
+document
+  .getElementById("confirmImportBtn")
+  .addEventListener(
+    "click",
+    restoreBackup
+  );
+
+
+document
+  .getElementById("resetDataBtn")
+  .addEventListener(
+    "click",
+    resetAllData
+  );
+
+
+document
+  .getElementById("importModal")
+  .addEventListener(
+    "click",
+    function (event) {
+      if (event.target === this) {
+        closeImportModal();
+      }
+    }
+  );
+
+
+document.addEventListener(
+  "keydown",
+  function (event) {
+    if (
+      event.key === "Escape"
+    ) {
+      closeImportModal();
+    }
+  }
+);
+
+
+/* ================================
+   SYSTEM THEME CHANGES
+================================ */
+
+if (window.matchMedia) {
+  const mediaQuery =
+    window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
+
+  const handleThemeChange =
+    function () {
+      const settings =
+        getSettings();
+
+      if (
+        settings.appearance ===
+        "system"
+      ) {
+        applyAppearance("system");
+      }
+    };
+
+  if (
+    mediaQuery.addEventListener
+  ) {
+    mediaQuery.addEventListener(
+      "change",
+      handleThemeChange
+    );
+  } else if (
+    mediaQuery.addListener
+  ) {
+    mediaQuery.addListener(
+      handleThemeChange
+    );
+  }
+}
+
+
+/* ================================
+   PUBLIC API
+================================ */
 
 window.ShopManagerSettings = {
-  loadSettings,
+  getSettings,
   saveSettings,
-  exportData,
-  importData,
-  resetAllData,
-  applyTheme
+  updateBackupSummary,
+  createBackup,
+  resetAllData
 };
+
+
+/* ================================
+   START
+================================ */
+
+loadSettings();
+updateBackupSummary();
 ```
