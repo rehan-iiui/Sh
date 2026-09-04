@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+
+  <link rel="stylesheet" href="products.css">
+</head>
+
+<body>
+
+  <div class="products-page">
+
+    <div class="products-header">
+
+      <div>
+        <h1>Products</h1>
+        <p>Manage your shop inventory</p>
+      </div>
+
+      <button id="addProductBtn" class="add-product-btn">
+        + Add Product
+      </button>
+
+    </div>
+
+
+    <div class="products-toolbar">
+
+      <div class="search-box">
+        🔎
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search products..."
+        >
+      </div>
+
+      <select id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="electronics">Electronics</option>
+        <option value="clothing">Clothing</option>
+        <option value="food">Food</option>
+        <option value="other">Other</option>
+      </select>
+
+    </div>
+
+
+    <div class="products-stats">
+
+      <div class="product-stat">
+        <span>Total Products</span>
+        <strong id="productCount">0</strong>
+      </div>
+
+      <div class="product-stat">
+        <span>Total Stock</span>
+        <strong id="stockCount">0</strong>
+      </div>
+
+      <div class="product-stat">
+        <span>Low Stock</span>
+        <strong id="lowStockCount">0</strong>
+      </div>
+
+      <div class="product-stat">
+        <span>Inventory Value</span>
+        <strong id="inventoryValue">Rs. 0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="products-table-container">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Buying Price</th>
+            <th>Selling Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="productsTableBody">
+
+          <tr id="emptyProductsRow">
+            <td colspan="7">
+
+              <div class="empty-products">
+
+                <div class="empty-products-icon">
+                  📦
+                </div>
+
+                <h2>No products yet</h2>
+
+                <p>
+                  Add your first product to start managing inventory.
+                </p>
+
+                <button
+                  class="add-product-btn"
+                  id="emptyAddProductBtn"
+                >
+                  + Add First Product
+                </button>
+
+              </div>
+
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- Add Product Modal -->
+
+    <div class="modal" id="productModal">
+
+      <div class="modal-box">
+
+        <div class="modal-header">
+
+          <div>
+            <h2 id="modalTitle">Add Product</h2>
+            <p>Enter product information</p>
+          </div>
+
+          <button id="closeModalBtn" class="close-btn">
+            ×
+          </button>
+
+        </div>
+
+
+        <form id="productForm">
+
+          <div class="form-group">
+
+            <label for="productName">
+              Product Name
+            </label>
+
+            <input
+              type="text"
+              id="productName"
+              placeholder="e.g. Wireless Mouse"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group">
+
+              <label for="productCategory">
+                Category
+              </label>
+
+              <select id="productCategory" required>
+
+                <option value="">
+                  Select category
+                </option>
+
+                <option value="electronics">
+                  Electronics
+                </option>
+
+                <option value="clothing">
+                  Clothing
+                </option>
+
+                <option value="food">
+                  Food
+                </option>
+
+                <option value="other">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productStock">
+                Stock Quantity
+              </label>
+
+              <input
+                type="number"
+                id="productStock"
+                placeholder="0"
+                min="0"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group">
+
+              <label for="buyingPrice">
+                Buying Price
+              </label>
+
+              <input
+                type="number"
+                id="buyingPrice"
+                placeholder="0"
+                min="0"
+                step="0.01"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="sellingPrice">
+                Selling Price
+              </label>
+
+              <input
+                type="number"
+                id="sellingPrice"
+                placeholder="0"
+                min="0"
+                step="0.01"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              type="button"
+              id="cancelBtn"
+              class="cancel-btn"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="save-product-btn"
+            >
+              Save Product
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="products.js"></script>
+
+</body>
+</html>
+```
