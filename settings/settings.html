@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Settings - Shop Manager</title>
-  <link rel="stylesheet" href="settings.css">
+
+  <link
+    rel="stylesheet"
+    href="settings.css"
+  >
 </head>
+
 
 <body>
 
@@ -13,10 +24,15 @@
 
   <!-- HEADER -->
   <header class="page-header">
+
     <div>
       <h1>Settings</h1>
-      <p>Customize and manage your Shop Manager</p>
+
+      <p>
+        Customize and manage your Shop Manager
+      </p>
     </div>
+
   </header>
 
 
@@ -24,66 +40,103 @@
   <section class="settings-card">
 
     <div class="section-heading">
+
       <div>
         <h2>Shop Information</h2>
-        <p>Your business details</p>
+
+        <p>
+          Your business details
+        </p>
       </div>
+
     </div>
+
 
     <form id="shopForm">
 
       <div class="form-grid">
 
         <div class="form-group">
-          <label for="shopName">Shop Name</label>
+
+          <label for="shopName">
+            Shop Name
+          </label>
+
           <input
             type="text"
             id="shopName"
             placeholder="My Shop"
           >
+
         </div>
 
+
         <div class="form-group">
-          <label for="ownerName">Owner Name</label>
+
+          <label for="ownerName">
+            Owner Name
+          </label>
+
           <input
             type="text"
             id="ownerName"
             placeholder="Owner name"
           >
+
         </div>
 
+
         <div class="form-group">
-          <label for="shopPhone">Phone</label>
+
+          <label for="shopPhone">
+            Phone
+          </label>
+
           <input
             type="tel"
             id="shopPhone"
             placeholder="Phone number"
           >
+
         </div>
 
+
         <div class="form-group">
-          <label for="shopEmail">Email</label>
+
+          <label for="shopEmail">
+            Email
+          </label>
+
           <input
             type="email"
             id="shopEmail"
             placeholder="shop@example.com"
           >
+
         </div>
 
       </div>
 
+
       <div class="form-group">
-        <label for="shopAddress">Address</label>
+
+        <label for="shopAddress">
+          Address
+        </label>
+
         <textarea
           id="shopAddress"
           rows="3"
           placeholder="Shop address"
         ></textarea>
+
       </div>
+
 
       <button
         type="submit"
         class="primary-btn"
+        id="saveShopButton"
       >
         Save Shop Information
       </button>
@@ -97,27 +150,59 @@
   <section class="settings-card">
 
     <div class="section-heading">
+
       <div>
-        <h2>Business Settings</h2>
-        <p>Configure how your shop works</p>
+
+        <h2>
+          Business Settings
+        </h2>
+
+        <p>
+          Configure how your shop works
+        </p>
+
       </div>
+
     </div>
+
 
     <div class="form-grid">
 
       <div class="form-group">
-        <label for="currency">Currency</label>
+
+        <label for="currency">
+          Currency
+        </label>
 
         <select id="currency">
-          <option value="Rs">Rs</option>
-          <option value="$">$</option>
-          <option value="€">€</option>
-          <option value="£">£</option>
-          <option value="¥">¥</option>
+
+          <option value="Rs">
+            Rs
+          </option>
+
+          <option value="$">
+            $
+          </option>
+
+          <option value="€">
+            €
+          </option>
+
+          <option value="£">
+            £
+          </option>
+
+          <option value="¥">
+            ¥
+          </option>
+
         </select>
+
       </div>
 
+
       <div class="form-group">
+
         <label for="invoicePrefix">
           Invoice Prefix
         </label>
@@ -127,9 +212,12 @@
           id="invoicePrefix"
           placeholder="INV"
         >
+
       </div>
 
+
       <div class="form-group">
+
         <label for="lowStockThreshold">
           Low Stock Threshold
         </label>
@@ -141,11 +229,14 @@
           step="1"
           placeholder="5"
         >
+
       </div>
 
     </div>
 
+
     <button
+      type="button"
       class="primary-btn"
       id="saveBusinessSettings"
     >
@@ -159,15 +250,26 @@
   <section class="settings-card">
 
     <div class="section-heading">
+
       <div>
-        <h2>Appearance</h2>
-        <p>Choose how Shop Manager looks</p>
+
+        <h2>
+          Appearance
+        </h2>
+
+        <p>
+          Choose how Shop Manager looks
+        </p>
+
       </div>
+
     </div>
+
 
     <div class="appearance-options">
 
       <label class="appearance-option">
+
         <input
           type="radio"
           name="appearance"
@@ -175,12 +277,22 @@
         >
 
         <div>
-          <strong>☀️ Light</strong>
-          <span>Use light appearance</span>
+
+          <strong>
+            ☀️ Light
+          </strong>
+
+          <span>
+            Use light appearance
+          </span>
+
         </div>
+
       </label>
 
+
       <label class="appearance-option">
+
         <input
           type="radio"
           name="appearance"
@@ -188,12 +300,22 @@
         >
 
         <div>
-          <strong>🌙 Dark</strong>
-          <span>Use dark appearance</span>
+
+          <strong>
+            🌙 Dark
+          </strong>
+
+          <span>
+            Use dark appearance
+          </span>
+
         </div>
+
       </label>
 
+
       <label class="appearance-option">
+
         <input
           type="radio"
           name="appearance"
@@ -201,9 +323,17 @@
         >
 
         <div>
-          <strong>💻 System</strong>
-          <span>Follow your device</span>
+
+          <strong>
+            💻 System
+          </strong>
+
+          <span>
+            Follow your device
+          </span>
+
         </div>
+
       </label>
 
     </div>
@@ -215,12 +345,20 @@
   <section class="settings-card backup-card">
 
     <div class="section-heading">
+
       <div>
-        <h2>Advanced Backup & Restore</h2>
+
+        <h2>
+          Advanced Backup & Restore
+        </h2>
+
         <p>
-          Protect your Shop Manager data with a complete backup.
+          Protect your Shop Manager data
+          with a complete backup.
         </p>
+
       </div>
+
     </div>
 
 
@@ -238,7 +376,8 @@
         </strong>
 
         <span id="backupStatusText">
-          Create a backup regularly to protect your shop data.
+          Create a backup regularly to protect
+          your shop data.
         </span>
 
       </div>
@@ -250,33 +389,80 @@
     <div class="backup-summary">
 
       <div class="backup-summary-item">
-        <span>Products</span>
-        <strong id="backupProductsCount">0</strong>
+
+        <span>
+          Products
+        </span>
+
+        <strong id="backupProductsCount">
+          0
+        </strong>
+
       </div>
 
-      <div class="backup-summary-item">
-        <span>Sales</span>
-        <strong id="backupSalesCount">0</strong>
-      </div>
 
       <div class="backup-summary-item">
-        <span>Customers</span>
-        <strong id="backupCustomersCount">0</strong>
+
+        <span>
+          Sales
+        </span>
+
+        <strong id="backupSalesCount">
+          0
+        </strong>
+
       </div>
 
-      <div class="backup-summary-item">
-        <span>Expenses</span>
-        <strong id="backupExpensesCount">0</strong>
-      </div>
 
       <div class="backup-summary-item">
-        <span>Invoices</span>
-        <strong id="backupInvoicesCount">0</strong>
+
+        <span>
+          Customers
+        </span>
+
+        <strong id="backupCustomersCount">
+          0
+        </strong>
+
       </div>
 
+
       <div class="backup-summary-item">
-        <span>Stock Movements</span>
-        <strong id="backupInventoryCount">0</strong>
+
+        <span>
+          Expenses
+        </span>
+
+        <strong id="backupExpensesCount">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="backup-summary-item">
+
+        <span>
+          Invoices
+        </span>
+
+        <strong id="backupInvoicesCount">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="backup-summary-item">
+
+        <span>
+          Stock Movements
+        </span>
+
+        <strong id="backupInventoryCount">
+          0
+        </strong>
+
       </div>
 
     </div>
@@ -286,11 +472,13 @@
     <div class="backup-actions">
 
       <button
+        type="button"
         class="primary-btn"
         id="exportDataBtn"
       >
         💾 Export Full Backup
       </button>
+
 
       <label
         class="secondary-btn file-btn"
@@ -298,6 +486,7 @@
       >
         📥 Import Backup
       </label>
+
 
       <input
         type="file"
@@ -329,27 +518,42 @@
   <section class="settings-card danger-card">
 
     <div class="section-heading">
+
       <div>
-        <h2>Danger Zone</h2>
+
+        <h2>
+          Danger Zone
+        </h2>
+
         <p>
           Be careful when using these actions.
         </p>
+
       </div>
+
     </div>
+
 
     <div class="danger-content">
 
       <div>
-        <strong>Reset All Data</strong>
+
+        <strong>
+          Reset All Data
+        </strong>
 
         <p>
-          Permanently remove products, sales,
-          customers, expenses, invoices and
-          inventory history from this device.
+          Permanently remove products,
+          sales, customers, expenses,
+          invoices and inventory history
+          from this device.
         </p>
+
       </div>
 
+
       <button
+        type="button"
         class="danger-btn"
         id="resetDataBtn"
       >
@@ -374,13 +578,20 @@
     <div class="modal-header">
 
       <div>
-        <h2>Import Backup</h2>
+
+        <h2>
+          Import Backup
+        </h2>
+
         <p>
           Review the backup before restoring it.
         </p>
+
       </div>
 
+
       <button
+        type="button"
         class="close-btn"
         id="closeImportModal"
       >
@@ -391,21 +602,38 @@
 
 
     <div class="import-warning">
-      ⚠️ Importing a backup will replace the
-      current Shop Manager data.
+
+      ⚠️ Importing a backup will replace
+      the current Shop Manager data.
+
     </div>
 
 
     <div class="import-file-info">
 
       <div>
-        <span>Backup Date</span>
-        <strong id="importBackupDate">-</strong>
+
+        <span>
+          Backup Date
+        </span>
+
+        <strong id="importBackupDate">
+          -
+        </strong>
+
       </div>
 
+
       <div>
-        <span>Backup Version</span>
-        <strong id="importBackupVersion">-</strong>
+
+        <span>
+          Backup Version
+        </span>
+
+        <strong id="importBackupVersion">
+          -
+        </strong>
+
       </div>
 
     </div>
@@ -419,33 +647,80 @@
     <div class="import-preview-grid">
 
       <div>
-        <span>📦 Products</span>
-        <strong id="importProductsCount">0</strong>
+
+        <span>
+          📦 Products
+        </span>
+
+        <strong id="importProductsCount">
+          0
+        </strong>
+
       </div>
 
-      <div>
-        <span>🛒 Sales</span>
-        <strong id="importSalesCount">0</strong>
-      </div>
 
       <div>
-        <span>👥 Customers</span>
-        <strong id="importCustomersCount">0</strong>
+
+        <span>
+          🛒 Sales
+        </span>
+
+        <strong id="importSalesCount">
+          0
+        </strong>
+
       </div>
 
-      <div>
-        <span>💸 Expenses</span>
-        <strong id="importExpensesCount">0</strong>
-      </div>
 
       <div>
-        <span>🧾 Invoices</span>
-        <strong id="importInvoicesCount">0</strong>
+
+        <span>
+          👥 Customers
+        </span>
+
+        <strong id="importCustomersCount">
+          0
+        </strong>
+
       </div>
 
+
       <div>
-        <span>📊 Stock Movements</span>
-        <strong id="importInventoryCount">0</strong>
+
+        <span>
+          💸 Expenses
+        </span>
+
+        <strong id="importExpensesCount">
+          0
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <span>
+          🧾 Invoices
+        </span>
+
+        <strong id="importInvoicesCount">
+          0
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <span>
+          📊 Stock Movements
+        </span>
+
+        <strong id="importInventoryCount">
+          0
+        </strong>
+
       </div>
 
     </div>
@@ -454,13 +729,16 @@
     <div class="modal-actions">
 
       <button
+        type="button"
         class="secondary-btn"
         id="cancelImportBtn"
       >
         Cancel
       </button>
 
+
       <button
+        type="button"
         class="primary-btn"
         id="confirmImportBtn"
       >
@@ -474,7 +752,13 @@
 </div>
 
 
-<script src="settings.js"></script>
+<!-- SETTINGS JAVASCRIPT -->
+
+<script
+  src="./settings.js?v=20260904"
+  defer
+></script>
+
 
 </body>
 </html>
