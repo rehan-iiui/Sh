@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports - Shop Manager</title>
+  <link rel="stylesheet" href="reports.css">
+</head>
+
+<body>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div>
+        <h1>Reports</h1>
+        <p>Analyze your shop's sales, expenses and profit.</p>
+      </div>
+
+      <button class="secondary-btn" id="printReportBtn">
+        🖨️ Print Report
+      </button>
+    </header>
+
+
+    <!-- Date Filter -->
+    <section class="filter-card">
+
+      <div class="filter-title">
+        <h2>Report Period</h2>
+        <p>Choose the period you want to analyze.</p>
+      </div>
+
+      <div class="filter-controls">
+
+        <select id="periodSelect">
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month" selected>This Month</option>
+          <option value="year">This Year</option>
+          <option value="all">All Time</option>
+          <option value="custom">Custom Range</option>
+        </select>
+
+        <div class="custom-dates" id="customDates">
+
+          <input
+            type="date"
+            id="startDate"
+          >
+
+          <span>to</span>
+
+          <input
+            type="date"
+            id="endDate"
+          >
+
+        </div>
+
+        <button class="primary-btn" id="applyFilterBtn">
+          Apply
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- Main Statistics -->
+    <section class="stats-grid">
+
+      <div class="stat-card sales-card">
+        <div class="stat-icon">💰</div>
+        <div>
+          <span>Total Sales</span>
+          <strong id="totalSales">Rs 0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card expense-card">
+        <div class="stat-icon">💸</div>
+        <div>
+          <span>Total Expenses</span>
+          <strong id="totalExpenses">Rs 0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card profit-card">
+        <div class="stat-icon">📈</div>
+        <div>
+          <span>Net Profit</span>
+          <strong id="netProfit">Rs 0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div>
+          <span>Total Orders</span>
+          <strong id="totalOrders">0</strong>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- Secondary Statistics -->
+    <section class="stats-grid secondary-stats">
+
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+          <span>Items Sold</span>
+          <strong id="itemsSold">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div>
+          <span>Customers</span>
+          <strong id="customersCount">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🧮</div>
+        <div>
+          <span>Average Order</span>
+          <strong id="averageOrder">Rs 0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div>
+          <span>Profit Margin</span>
+          <strong id="profitMargin">0%</strong>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- Report Grid -->
+    <section class="report-grid">
+
+      <!-- Sales Report -->
+      <div class="report-card">
+
+        <div class="report-header">
+          <div>
+            <h2>Sales Overview</h2>
+            <p>Sales performance during the selected period.</p>
+          </div>
+        </div>
+
+        <div class="report-content">
+
+          <div class="metric-row">
+            <span>Gross Sales</span>
+            <strong id="grossSales">Rs 0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Orders</span>
+            <strong id="salesOrders">0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Items Sold</span>
+            <strong id="salesItems">0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Average Order Value</span>
+            <strong id="salesAverage">Rs 0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Expense Report -->
+      <div class="report-card">
+
+        <div class="report-header">
+          <div>
+            <h2>Expense Overview</h2>
+            <p>Where your shop's money is being spent.</p>
+          </div>
+        </div>
+
+        <div class="report-content">
+
+          <div class="metric-row">
+            <span>Total Expenses</span>
+            <strong id="expenseTotal">Rs 0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Expense Records</span>
+            <strong id="expenseRecords">0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Average Expense</span>
+            <strong id="averageExpense">Rs 0</strong>
+          </div>
+
+          <div class="metric-row">
+            <span>Largest Expense</span>
+            <strong id="largestExpense">Rs 0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Profit Summary -->
+    <section class="content-card">
+
+      <div class="card-top">
+        <div>
+          <h2>Profit Summary</h2>
+          <p>Sales compared with expenses.</p>
+        </div>
+      </div>
+
+      <div class="profit-summary">
+
+        <div class="profit-item">
+          <span>Sales Revenue</span>
+          <strong id="summarySales">Rs 0</strong>
+        </div>
+
+        <div class="profit-sign">−</div>
+
+        <div class="profit-item">
+          <span>Expenses</span>
+          <strong id="summaryExpenses">Rs 0</strong>
+        </div>
+
+        <div class="profit-sign">=</div>
+
+        <div class="profit-item final-profit">
+          <span>Net Profit</span>
+          <strong id="summaryProfit">Rs 0</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Top Products -->
+    <section class="content-card">
+
+      <div class="card-top">
+        <div>
+          <h2>Top Selling Products</h2>
+          <p>Products sold most during the selected period.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity Sold</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+
+          <tbody id="topProductsBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="empty-small" id="topProductsEmpty">
+        No sales data available for this period.
+      </div>
+
+    </section>
+
+
+    <!-- Expense Categories -->
+    <section class="content-card">
+
+      <div class="card-top">
+        <div>
+          <h2>Expenses by Category</h2>
+          <p>Breakdown of your expenses.</p>
+        </div>
+      </div>
+
+      <div id="expenseCategories" class="category-list">
+      </div>
+
+      <div class="empty-small" id="expenseCategoriesEmpty">
+        No expense data available for this period.
+      </div>
+
+    </section>
+
+
+    <!-- Recent Sales -->
+    <section class="content-card">
+
+      <div class="card-top">
+        <div>
+          <h2>Sales in Selected Period</h2>
+          <p>Recent transactions included in this report.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Sale ID</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+
+          <tbody id="salesReportBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="empty-small" id="salesReportEmpty">
+        No sales found for this period.
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script src="reports.js"></script>
+
+</body>
+</html>
+```
