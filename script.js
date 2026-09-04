@@ -1,3 +1,4 @@
+```javascript
 // ==========================================
 // SHOP MANAGER - MAIN JAVASCRIPT
 // ==========================================
@@ -13,37 +14,30 @@ document.addEventListener("DOMContentLoaded", () => {
       title: "Dashboard",
       subtitle: "Welcome to your shop"
     },
-
     products: {
       title: "Products",
       subtitle: "Manage your shop products"
     },
-
     sales: {
       title: "Sales",
       subtitle: "Track your sales and transactions"
     },
-
     customers: {
       title: "Customers",
       subtitle: "Manage your customers"
     },
-
     expenses: {
       title: "Expenses",
       subtitle: "Track your business expenses"
     },
-
     invoices: {
       title: "Invoices",
       subtitle: "Create and manage invoices"
     },
-
     reports: {
       title: "Reports",
       subtitle: "View your business performance"
     },
-
     settings: {
       title: "Settings",
       subtitle: "Manage your shop settings"
@@ -69,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // STORAGE HELPER
+  // STORAGE
   // ==========================================
 
   function getArray(key) {
@@ -86,6 +80,53 @@ document.addEventListener("DOMContentLoaded", () => {
       return [];
 
     }
+
+  }
+
+
+  // ==========================================
+  // SETTINGS
+  // ==========================================
+
+  function getSettings() {
+
+    try {
+
+      const settings =
+        JSON.parse(
+          localStorage.getItem("shopManagerSettings")
+        );
+
+      return settings || {};
+
+    } catch (error) {
+
+      return {};
+
+    }
+
+  }
+
+
+  function getCurrency() {
+
+    const settings = getSettings();
+
+    return settings.currency || "Rs";
+
+  }
+
+
+  function formatMoney(amount) {
+
+    const number =
+      Number(amount) || 0;
+
+    return (
+      getCurrency() +
+      ". " +
+      number.toLocaleString()
+    );
 
   }
 
@@ -108,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
       String(now.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+
   }
 
 
@@ -133,42 +175,47 @@ document.addEventListener("DOMContentLoaded", () => {
       String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
+
   }
 
 
-  // ==========================================
-  // CURRENCY
-  // ==========================================
+  function formatDate(value) {
 
-  function getCurrency() {
-
-    try {
-
-      const settings =
-        JSON.parse(
-          localStorage.getItem("shopManagerSettings")
-        );
-
-      return settings?.currency || "Rs";
-
-    } catch (error) {
-
-      return "Rs";
-
+    if (!value) {
+      return "-";
     }
+
+    const date =
+      new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "-";
+    }
+
+    return date.toLocaleDateString(
+      undefined,
+      {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
   }
 
 
-  function formatMoney(amount) {
+  // ==========================================
+  // HTML ESCAPE
+  // ==========================================
 
-    const number =
-      Number(amount) || 0;
+  function escapeHTML(value) {
 
-    return (
-      getCurrency() +
-      ". " +
-      number.toLocaleString()
-    );
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
 
   }
 
@@ -223,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Refresh dashboard when opened
     if (pageId === "dashboard") {
       updateDashboard();
     }
@@ -247,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // DASHBOARD PAGE BUTTONS
+  // INTERNAL PAGE BUTTONS
   // ==========================================
 
   document
@@ -318,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ------------------------------------------
-    // PRODUCT STATISTICS
+    // STOCK
     // ------------------------------------------
 
     const totalProducts =
@@ -329,24 +375,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let outStockProducts = 0;
 
 
-    let lowStockThreshold = 5;
+    const settings =
+      getSettings();
 
-    try {
 
-      const settings =
-        JSON.parse(
-          localStorage.getItem("shopManagerSettings")
-        );
-
-      lowStockThreshold =
-        Math.max(
-          1,
-          Number(settings?.lowStockThreshold) || 5
-        );
-
-    } catch (error) {
-      lowStockThreshold = 5;
-    }
+    const lowStockThreshold =
+      Math.max(
+        1,
+        Number(settings.lowStockThreshold) || 5
+      );
 
 
     products.forEach(product => {
@@ -373,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ------------------------------------------
-    // SALES STATISTICS
+    // SALES
     // ------------------------------------------
 
     const today =
@@ -393,9 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       if (getDateOnly(sale.date) === today) {
-
         todaySalesAmount += total;
-
       }
 
 
@@ -431,58 +466,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     if (todaySales) {
-
       todaySales.textContent =
         formatMoney(todaySalesAmount);
-
     }
 
 
     if (totalProductsElement) {
-
       totalProductsElement.textContent =
         totalProducts;
-
     }
 
 
     if (totalCustomers) {
-
       totalCustomers.textContent =
         customers.length;
-
     }
 
 
     if (totalProfitElement) {
-
       totalProfitElement.textContent =
         formatMoney(totalProfit);
-
     }
 
 
     if (stockProductsElement) {
-
       stockProductsElement.textContent =
         stockProducts;
-
     }
 
 
     if (lowStockProductsElement) {
-
       lowStockProductsElement.textContent =
         lowStockProducts;
-
     }
 
 
     if (outStockProductsElement) {
-
       outStockProductsElement.textContent =
         outStockProducts;
-
     }
 
 
@@ -491,6 +512,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // ------------------------------------------
 
     updateRecentSales(sales);
+
+
+    // ------------------------------------------
+    // CHARTS
+    // ------------------------------------------
+
+    drawSalesChart(sales);
+
+    drawComparisonChart(
+      sales,
+      getArray("shopManagerExpenses")
+    );
 
   }
 
@@ -512,19 +545,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    const oldEmptyState =
+    const oldEmpty =
       panel.querySelector(".empty-state");
 
-    if (oldEmptyState) {
-      oldEmptyState.remove();
+    if (oldEmpty) {
+      oldEmpty.remove();
     }
 
 
-    const existingTable =
+    const oldTable =
       panel.querySelector(".recent-sales-table");
 
-    if (existingTable) {
-      existingTable.remove();
+    if (oldTable) {
+      oldTable.remove();
     }
 
 
@@ -533,15 +566,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const empty =
         document.createElement("div");
 
-      empty.className = "empty-state";
+      empty.className =
+        "empty-state";
+
 
       empty.innerHTML = `
         <div class="empty-icon">🧾</div>
-
         <h3>No sales yet</h3>
-
         <p>Your recent sales will appear here.</p>
-
         <button class="primary-button" id="emptySaleButton">
           Create First Sale
         </button>
@@ -553,6 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const button =
         document.getElementById("emptySaleButton");
+
 
       if (button) {
         button.addEventListener(
@@ -633,46 +666,944 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // ==========================================
-  // DATE FORMAT
+  // GET LAST 7 DAYS
   // ==========================================
 
-  function formatDate(value) {
+  function getLastSevenDays() {
 
-    if (!value) {
-      return "-";
+    const days = [];
+
+    const now =
+      new Date();
+
+
+    for (let i = 6; i >= 0; i--) {
+
+      const date =
+        new Date(now);
+
+      date.setHours(0, 0, 0, 0);
+
+      date.setDate(
+        now.getDate() - i
+      );
+
+
+      const year =
+        date.getFullYear();
+
+      const month =
+        String(date.getMonth() + 1)
+          .padStart(2, "0");
+
+      const day =
+        String(date.getDate())
+          .padStart(2, "0");
+
+
+      days.push({
+        key: `${year}-${month}-${day}`,
+        label: date.toLocaleDateString(
+          undefined,
+          { weekday: "short" }
+        ),
+        shortDate: date.toLocaleDateString(
+          undefined,
+          {
+            day: "numeric",
+            month: "short"
+          }
+        )
+      });
+
     }
 
-    const date =
-      new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
-      return "-";
+    return days;
+
+  }
+
+
+  // ==========================================
+  // CREATE CANVAS SIZE
+  // ==========================================
+
+  function prepareCanvas(canvas) {
+
+    if (!canvas) {
+      return null;
     }
 
-    return date.toLocaleDateString(
-      undefined,
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+
+    const width =
+      Math.max(300, rect.width);
+
+    const height =
+      Math.max(200, rect.height);
+
+
+    const ratio =
+      window.devicePixelRatio || 1;
+
+
+    canvas.width =
+      width * ratio;
+
+    canvas.height =
+      height * ratio;
+
+
+    const ctx =
+      canvas.getContext("2d");
+
+
+    ctx.setTransform(
+      ratio,
+      0,
+      0,
+      ratio,
+      0,
+      0
+    );
+
+
+    return {
+      ctx,
+      width,
+      height
+    };
+
+  }
+
+
+  // ==========================================
+  // DRAW SALES CHART
+  // ==========================================
+
+  function drawSalesChart(sales) {
+
+    const canvas =
+      document.getElementById("salesChart");
+
+    const empty =
+      document.getElementById("salesChartEmpty");
+
+
+    if (!canvas) {
+      return;
+    }
+
+
+    const chart =
+      prepareCanvas(canvas);
+
+
+    if (!chart) {
+      return;
+    }
+
+
+    const {
+      ctx,
+      width,
+      height
+    } = chart;
+
+
+    const days =
+      getLastSevenDays();
+
+
+    const values =
+      days.map(day => {
+
+        return sales
+          .filter(
+            sale =>
+              getDateOnly(sale.date) === day.key
+          )
+          .reduce(
+            (sum, sale) =>
+              sum + (Number(sale.total) || 0),
+            0
+          );
+
+      });
+
+
+    const hasData =
+      values.some(value => value > 0);
+
+
+    if (empty) {
+      empty.style.display =
+        hasData ? "none" : "flex";
+    }
+
+
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+
+    if (!hasData) {
+      return;
+    }
+
+
+    const padding = {
+      top: 18,
+      right: 15,
+      bottom: 35,
+      left: 55
+    };
+
+
+    const chartWidth =
+      width -
+      padding.left -
+      padding.right;
+
+    const chartHeight =
+      height -
+      padding.top -
+      padding.bottom;
+
+
+    const maxValue =
+      Math.max(...values, 1);
+
+
+    const roundedMax =
+      getNiceMax(maxValue);
+
+
+    // ------------------------------------------
+    // GRID
+    // ------------------------------------------
+
+    ctx.font =
+      "10px Arial";
+
+    ctx.textAlign =
+      "right";
+
+    ctx.textBaseline =
+      "middle";
+
+    ctx.strokeStyle =
+      "#e5e7eb";
+
+    ctx.fillStyle =
+      "#9ca3af";
+
+
+    const gridLines = 4;
+
+
+    for (let i = 0; i <= gridLines; i++) {
+
+      const value =
+        roundedMax *
+        (i / gridLines);
+
+
+      const y =
+        padding.top +
+        chartHeight -
+        (chartHeight * i / gridLines);
+
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        padding.left,
+        y
+      );
+
+      ctx.lineTo(
+        width - padding.right,
+        y
+      );
+
+      ctx.stroke();
+
+
+      ctx.fillText(
+        formatCompactMoney(value),
+        padding.left - 8,
+        y
+      );
+
+    }
+
+
+    // ------------------------------------------
+    // LINE
+    // ------------------------------------------
+
+    const points = [];
+
+
+    values.forEach((value, index) => {
+
+      const x =
+        padding.left +
+        (
+          chartWidth *
+          index /
+          (values.length - 1)
+        );
+
+
+      const y =
+        padding.top +
+        chartHeight -
+        (
+          value /
+          roundedMax *
+          chartHeight
+        );
+
+
+      points.push({ x, y });
+
+    });
+
+
+    // Area
+    ctx.beginPath();
+
+    points.forEach((point, index) => {
+
+      if (index === 0) {
+        ctx.moveTo(
+          point.x,
+          point.y
+        );
+      } else {
+        ctx.lineTo(
+          point.x,
+          point.y
+        );
       }
+
+    });
+
+
+    ctx.lineTo(
+      points[points.length - 1].x,
+      padding.top + chartHeight
+    );
+
+
+    ctx.lineTo(
+      points[0].x,
+      padding.top + chartHeight
+    );
+
+
+    ctx.closePath();
+
+
+    ctx.fillStyle =
+      "rgba(239, 68, 68, 0.10)";
+
+    ctx.fill();
+
+
+    // Line
+    ctx.beginPath();
+
+
+    points.forEach((point, index) => {
+
+      if (index === 0) {
+
+        ctx.moveTo(
+          point.x,
+          point.y
+        );
+
+      } else {
+
+        ctx.lineTo(
+          point.x,
+          point.y
+        );
+
+      }
+
+    });
+
+
+    ctx.strokeStyle =
+      "#ef4444";
+
+    ctx.lineWidth = 3;
+
+    ctx.lineJoin =
+      "round";
+
+    ctx.lineCap =
+      "round";
+
+    ctx.stroke();
+
+
+    // Points
+    points.forEach((point, index) => {
+
+      ctx.beginPath();
+
+      ctx.arc(
+        point.x,
+        point.y,
+        4,
+        0,
+        Math.PI * 2
+      );
+
+
+      ctx.fillStyle =
+        "#ffffff";
+
+      ctx.fill();
+
+
+      ctx.strokeStyle =
+        "#ef4444";
+
+      ctx.lineWidth = 2;
+
+      ctx.stroke();
+
+
+      // Value above point
+      if (values[index] > 0) {
+
+        ctx.fillStyle =
+          "#374151";
+
+        ctx.font =
+          "10px Arial";
+
+        ctx.textAlign =
+          "center";
+
+        ctx.textBaseline =
+          "bottom";
+
+
+        ctx.fillText(
+          formatCompactMoney(values[index]),
+          point.x,
+          point.y - 8
+        );
+
+      }
+
+    });
+
+
+    // ------------------------------------------
+    // X AXIS LABELS
+    // ------------------------------------------
+
+    ctx.fillStyle =
+      "#9ca3af";
+
+    ctx.font =
+      "10px Arial";
+
+    ctx.textAlign =
+      "center";
+
+    ctx.textBaseline =
+      "top";
+
+
+    days.forEach((day, index) => {
+
+      const x =
+        padding.left +
+        (
+          chartWidth *
+          index /
+          (days.length - 1)
+        );
+
+
+      ctx.fillText(
+        day.label,
+        x,
+        padding.top + chartHeight + 10
+      );
+
+    });
+
+  }
+
+
+  // ==========================================
+  // DRAW SALES VS EXPENSES
+  // ==========================================
+
+  function drawComparisonChart(
+    sales,
+    expenses
+  ) {
+
+    const canvas =
+      document.getElementById(
+        "comparisonChart"
+      );
+
+    const empty =
+      document.getElementById(
+        "comparisonChartEmpty"
+      );
+
+
+    if (!canvas) {
+      return;
+    }
+
+
+    const chart =
+      prepareCanvas(canvas);
+
+
+    if (!chart) {
+      return;
+    }
+
+
+    const {
+      ctx,
+      width,
+      height
+    } = chart;
+
+
+    const days =
+      getLastSevenDays();
+
+
+    const salesValues =
+      days.map(day => {
+
+        return sales
+          .filter(
+            sale =>
+              getDateOnly(sale.date) === day.key
+          )
+          .reduce(
+            (sum, sale) =>
+              sum + (Number(sale.total) || 0),
+            0
+          );
+
+      });
+
+
+    const expenseValues =
+      days.map(day => {
+
+        return expenses
+          .filter(
+            expense =>
+              getDateOnly(expense.date) === day.key
+          )
+          .reduce(
+            (sum, expense) =>
+              sum + (Number(expense.amount) || 0),
+            0
+          );
+
+      });
+
+
+    const hasData =
+      salesValues.some(value => value > 0) ||
+      expenseValues.some(value => value > 0);
+
+
+    if (empty) {
+      empty.style.display =
+        hasData ? "none" : "flex";
+    }
+
+
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+
+    if (!hasData) {
+      return;
+    }
+
+
+    const padding = {
+      top: 25,
+      right: 15,
+      bottom: 40,
+      left: 55
+    };
+
+
+    const chartWidth =
+      width -
+      padding.left -
+      padding.right;
+
+    const chartHeight =
+      height -
+      padding.top -
+      padding.bottom;
+
+
+    const maxValue =
+      Math.max(
+        ...salesValues,
+        ...expenseValues,
+        1
+      );
+
+
+    const roundedMax =
+      getNiceMax(maxValue);
+
+
+    // ------------------------------------------
+    // GRID
+    // ------------------------------------------
+
+    ctx.font =
+      "10px Arial";
+
+    ctx.textAlign =
+      "right";
+
+    ctx.textBaseline =
+      "middle";
+
+    ctx.strokeStyle =
+      "#e5e7eb";
+
+    ctx.fillStyle =
+      "#9ca3af";
+
+
+    const gridLines = 4;
+
+
+    for (let i = 0; i <= gridLines; i++) {
+
+      const value =
+        roundedMax *
+        (i / gridLines);
+
+
+      const y =
+        padding.top +
+        chartHeight -
+        (
+          chartHeight *
+          i /
+          gridLines
+        );
+
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        padding.left,
+        y
+      );
+
+      ctx.lineTo(
+        width - padding.right,
+        y
+      );
+
+      ctx.stroke();
+
+
+      ctx.fillText(
+        formatCompactMoney(value),
+        padding.left - 8,
+        y
+      );
+
+    }
+
+
+    // ------------------------------------------
+    // BAR WIDTH
+    // ------------------------------------------
+
+    const groupWidth =
+      chartWidth /
+      days.length;
+
+    const barWidth =
+      Math.min(
+        18,
+        groupWidth * 0.28
+      );
+
+
+    // ------------------------------------------
+    // BARS
+    // ------------------------------------------
+
+    days.forEach((day, index) => {
+
+      const centerX =
+        padding.left +
+        groupWidth * index +
+        groupWidth / 2;
+
+
+      const salesHeight =
+        (
+          salesValues[index] /
+          roundedMax
+        ) *
+        chartHeight;
+
+
+      const expenseHeight =
+        (
+          expenseValues[index] /
+          roundedMax
+        ) *
+        chartHeight;
+
+
+      const salesX =
+        centerX -
+        barWidth -
+        2;
+
+
+      const expenseX =
+        centerX +
+        2;
+
+
+      // Sales
+      ctx.fillStyle =
+        "#ef4444";
+
+
+      ctx.fillRect(
+        salesX,
+        padding.top +
+          chartHeight -
+          salesHeight,
+        barWidth,
+        salesHeight
+      );
+
+
+      // Expenses
+      ctx.fillStyle =
+        "#6b7280";
+
+
+      ctx.fillRect(
+        expenseX,
+        padding.top +
+          chartHeight -
+          expenseHeight,
+        barWidth,
+        expenseHeight
+      );
+
+
+      // Day
+      ctx.fillStyle =
+        "#9ca3af";
+
+      ctx.font =
+        "10px Arial";
+
+      ctx.textAlign =
+        "center";
+
+      ctx.textBaseline =
+        "top";
+
+
+      ctx.fillText(
+        day.label,
+        centerX,
+        padding.top +
+          chartHeight +
+          10
+      );
+
+    });
+
+
+    // ------------------------------------------
+    // LEGEND
+    // ------------------------------------------
+
+    const legendY = 10;
+
+
+    ctx.fillStyle =
+      "#ef4444";
+
+    ctx.fillRect(
+      width - 125,
+      legendY,
+      10,
+      10
+    );
+
+
+    ctx.fillStyle =
+      "#374151";
+
+    ctx.font =
+      "10px Arial";
+
+    ctx.textAlign =
+      "left";
+
+    ctx.textBaseline =
+      "top";
+
+
+    ctx.fillText(
+      "Sales",
+      width - 110,
+      legendY - 1
+    );
+
+
+    ctx.fillStyle =
+      "#6b7280";
+
+    ctx.fillRect(
+      width - 65,
+      legendY,
+      10,
+      10
+    );
+
+
+    ctx.fillStyle =
+      "#374151";
+
+    ctx.fillText(
+      "Expenses",
+      width - 50,
+      legendY - 1
     );
 
   }
 
 
   // ==========================================
-  // HTML ESCAPE
+  // NICE MAXIMUM FOR CHART
   // ==========================================
 
-  function escapeHTML(value) {
+  function getNiceMax(value) {
 
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    if (value <= 10) {
+      return 10;
+    }
+
+
+    const magnitude =
+      Math.pow(
+        10,
+        Math.floor(
+          Math.log10(value)
+        )
+      );
+
+
+    const normalized =
+      value / magnitude;
+
+
+    let niceNumber;
+
+
+    if (normalized <= 1) {
+      niceNumber = 1;
+    } else if (normalized <= 2) {
+      niceNumber = 2;
+    } else if (normalized <= 5) {
+      niceNumber = 5;
+    } else {
+      niceNumber = 10;
+    }
+
+
+    return niceNumber * magnitude;
+
+  }
+
+
+  // ==========================================
+  // COMPACT MONEY
+  // ==========================================
+
+  function formatCompactMoney(amount) {
+
+    const number =
+      Number(amount) || 0;
+
+
+    if (number >= 1000000) {
+
+      return (
+        getCurrency() +
+        ". " +
+        (number / 1000000)
+          .toFixed(1) +
+        "M"
+      );
+
+    }
+
+
+    if (number >= 1000) {
+
+      return (
+        getCurrency() +
+        ". " +
+        (number / 1000)
+          .toFixed(1) +
+        "K"
+      );
+
+    }
+
+
+    return (
+      getCurrency() +
+      ". " +
+      Math.round(number)
+    );
 
   }
 
@@ -692,29 +1623,22 @@ document.addEventListener("DOMContentLoaded", () => {
       () => {
 
         const products =
-          getArray("shopManagerProducts");
+          getArray(
+            "shopManagerProducts"
+          );
 
 
-        let threshold = 5;
+        const settings =
+          getSettings();
 
-        try {
 
-          const settings =
-            JSON.parse(
-              localStorage.getItem(
-                "shopManagerSettings"
-              )
-            );
-
-          threshold =
-            Math.max(
-              1,
-              Number(settings?.lowStockThreshold) || 5
-            );
-
-        } catch (error) {
-          threshold = 5;
-        }
+        const threshold =
+          Math.max(
+            1,
+            Number(
+              settings.lowStockThreshold
+            ) || 5
+          );
 
 
         const lowStock =
@@ -736,7 +1660,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
 
-          alert("No new notifications.");
+          alert(
+            "No new notifications."
+          );
 
         }
 
@@ -760,8 +1686,26 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
+  // Refresh periodically
+  setInterval(
+    updateDashboard,
+    3000
+  );
+
+
+  // Redraw charts when window changes size
+  window.addEventListener(
+    "resize",
+    () => {
+
+      updateDashboard();
+
+    }
+  );
+
+
   // ==========================================
-  // GLOBAL SHOP MANAGER OBJECT
+  // GLOBAL SHOP MANAGER
   // ==========================================
 
   window.ShopManager = {
