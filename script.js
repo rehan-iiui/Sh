@@ -4,12 +4,11 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ------------------------------------------
+  // ==========================================
   // PAGE INFORMATION
-  // ------------------------------------------
+  // ==========================================
 
   const pageInfo = {
-
     dashboard: {
       title: "Dashboard",
       subtitle: "Welcome to your shop"
@@ -49,13 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
       title: "Settings",
       subtitle: "Manage your shop settings"
     }
-
   };
 
 
-  // ------------------------------------------
+  // ==========================================
   // ELEMENTS
-  // ------------------------------------------
+  // ==========================================
 
   const navItems =
     document.querySelectorAll(".nav-item[data-page]");
@@ -70,9 +68,114 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("pageSubtitle");
 
 
-  // ------------------------------------------
+  // ==========================================
+  // STORAGE HELPER
+  // ==========================================
+
+  function getArray(key) {
+
+    try {
+
+      const data =
+        JSON.parse(localStorage.getItem(key));
+
+      return Array.isArray(data) ? data : [];
+
+    } catch (error) {
+
+      return [];
+
+    }
+
+  }
+
+
+  // ==========================================
+  // DATE HELPERS
+  // ==========================================
+
+  function getToday() {
+
+    const now = new Date();
+
+    const year =
+      now.getFullYear();
+
+    const month =
+      String(now.getMonth() + 1).padStart(2, "0");
+
+    const day =
+      String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+
+  function getDateOnly(value) {
+
+    if (!value) {
+      return "";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    const year =
+      date.getFullYear();
+
+    const month =
+      String(date.getMonth() + 1).padStart(2, "0");
+
+    const day =
+      String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+
+  // ==========================================
+  // CURRENCY
+  // ==========================================
+
+  function getCurrency() {
+
+    try {
+
+      const settings =
+        JSON.parse(
+          localStorage.getItem("shopManagerSettings")
+        );
+
+      return settings?.currency || "Rs";
+
+    } catch (error) {
+
+      return "Rs";
+
+    }
+  }
+
+
+  function formatMoney(amount) {
+
+    const number =
+      Number(amount) || 0;
+
+    return (
+      getCurrency() +
+      ". " +
+      number.toLocaleString()
+    );
+
+  }
+
+
+  // ==========================================
   // SHOW PAGE
-  // ------------------------------------------
+  // ==========================================
 
   function showPage(pageId) {
 
@@ -90,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Update sidebar
     navItems.forEach(button => {
 
       button.classList.remove("active");
@@ -102,7 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // Update top title
     if (pageInfo[pageId]) {
 
       pageTitle.textContent =
@@ -114,7 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // Scroll main area to top
     const main =
       document.querySelector(".main");
 
@@ -122,52 +222,52 @@ document.addEventListener("DOMContentLoaded", () => {
       main.scrollTop = 0;
     }
 
+
+    // Refresh dashboard when opened
+    if (pageId === "dashboard") {
+      updateDashboard();
+    }
+
   }
 
 
-  // ------------------------------------------
+  // ==========================================
   // SIDEBAR NAVIGATION
-  // ------------------------------------------
+  // ==========================================
 
   navItems.forEach(button => {
 
     button.addEventListener("click", () => {
 
-      const pageId =
-        button.dataset.page;
-
-      showPage(pageId);
+      showPage(button.dataset.page);
 
     });
 
   });
 
 
-  // ------------------------------------------
-  // INTERNAL PAGE BUTTONS
-  // ------------------------------------------
+  // ==========================================
+  // DASHBOARD PAGE BUTTONS
+  // ==========================================
 
-  const pageTargetButtons =
-    document.querySelectorAll("[data-page-target]");
+  document
+    .querySelectorAll("[data-page-target]")
+    .forEach(button => {
 
+      button.addEventListener("click", () => {
 
-  pageTargetButtons.forEach(button => {
+        showPage(
+          button.dataset.pageTarget
+        );
 
-    button.addEventListener("click", () => {
-
-      const pageId =
-        button.dataset.pageTarget;
-
-      showPage(pageId);
+      });
 
     });
 
-  });
 
-
-  // ------------------------------------------
+  // ==========================================
   // QUICK SALE
-  // ------------------------------------------
+  // ==========================================
 
   const quickSaleButton =
     document.getElementById("quickSaleButton");
@@ -177,9 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   function openSalesPage() {
-
     showPage("sales");
-
   }
 
 
@@ -203,76 +301,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  // ------------------------------------------
-  // DASHBOARD DATA
-  // ------------------------------------------
-
-  function getArray(key) {
-
-    try {
-
-      const data =
-        JSON.parse(localStorage.getItem(key));
-
-      return Array.isArray(data) ? data : [];
-
-    } catch (error) {
-
-      return [];
-
-    }
-
-  }
-
-
-  function getToday() {
-
-    const now = new Date();
-
-    const year =
-      now.getFullYear();
-
-    const month =
-      String(now.getMonth() + 1).padStart(2, "0");
-
-    const day =
-      String(now.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-
-  }
-
-
-  function getSaleDate(sale) {
-
-    if (!sale || !sale.date) {
-      return "";
-    }
-
-    const date =
-      new Date(sale.date);
-
-    if (Number.isNaN(date.getTime())) {
-      return "";
-    }
-
-    const year =
-      date.getFullYear();
-
-    const month =
-      String(date.getMonth() + 1).padStart(2, "0");
-
-    const day =
-      String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-
-  }
-
-
-  // ------------------------------------------
+  // ==========================================
   // UPDATE DASHBOARD
-  // ------------------------------------------
+  // ==========================================
 
   function updateDashboard() {
 
@@ -286,23 +317,43 @@ document.addEventListener("DOMContentLoaded", () => {
       getArray("shopManagerCustomers");
 
 
-    // ----------------------------------------
-    // PRODUCTS
-    // ----------------------------------------
+    // ------------------------------------------
+    // PRODUCT STATISTICS
+    // ------------------------------------------
 
     const totalProducts =
       products.length;
-
 
     let stockProducts = 0;
     let lowStockProducts = 0;
     let outStockProducts = 0;
 
 
+    let lowStockThreshold = 5;
+
+    try {
+
+      const settings =
+        JSON.parse(
+          localStorage.getItem("shopManagerSettings")
+        );
+
+      lowStockThreshold =
+        Math.max(
+          1,
+          Number(settings?.lowStockThreshold) || 5
+        );
+
+    } catch (error) {
+      lowStockThreshold = 5;
+    }
+
+
     products.forEach(product => {
 
       const stock =
         Number(product.stock) || 0;
+
 
       if (stock <= 0) {
 
@@ -312,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         stockProducts++;
 
-        if (stock <= 5) {
+        if (stock <= lowStockThreshold) {
           lowStockProducts++;
         }
 
@@ -321,13 +372,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ----------------------------------------
-    // SALES
-    // ----------------------------------------
+    // ------------------------------------------
+    // SALES STATISTICS
+    // ------------------------------------------
 
     const today =
       getToday();
-
 
     let todaySalesAmount = 0;
     let totalProfit = 0;
@@ -342,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Number(sale.profit) || 0;
 
 
-      if (getSaleDate(sale) === today) {
+      if (getDateOnly(sale.date) === today) {
 
         todaySalesAmount += total;
 
@@ -354,9 +404,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    // ----------------------------------------
-    // UPDATE HTML
-    // ----------------------------------------
+    // ------------------------------------------
+    // UPDATE STAT CARDS
+    // ------------------------------------------
 
     const todaySales =
       document.getElementById("todaySales");
@@ -383,8 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (todaySales) {
 
       todaySales.textContent =
-        "Rs. " +
-        todaySalesAmount.toLocaleString();
+        formatMoney(todaySalesAmount);
 
     }
 
@@ -408,8 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (totalProfitElement) {
 
       totalProfitElement.textContent =
-        "Rs. " +
-        totalProfit.toLocaleString();
+        formatMoney(totalProfit);
 
     }
 
@@ -437,35 +485,201 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    // ------------------------------------------
+    // RECENT SALES
+    // ------------------------------------------
+
+    updateRecentSales(sales);
+
   }
 
 
-  // ------------------------------------------
-  // REFRESH DASHBOARD
-  // ------------------------------------------
+  // ==========================================
+  // RECENT SALES
+  // ==========================================
 
-  updateDashboard();
+  function updateRecentSales(sales) {
+
+    const panel =
+      document.querySelector(
+        "#dashboard .dashboard-grid .panel:first-child"
+      );
 
 
-  // Refresh dashboard whenever the user
-  // returns to the dashboard.
+    if (!panel) {
+      return;
+    }
 
-  navItems.forEach(button => {
 
-    button.addEventListener("click", () => {
+    const oldEmptyState =
+      panel.querySelector(".empty-state");
 
-      if (button.dataset.page === "dashboard") {
-        updateDashboard();
+    if (oldEmptyState) {
+      oldEmptyState.remove();
+    }
+
+
+    const existingTable =
+      panel.querySelector(".recent-sales-table");
+
+    if (existingTable) {
+      existingTable.remove();
+    }
+
+
+    if (sales.length === 0) {
+
+      const empty =
+        document.createElement("div");
+
+      empty.className = "empty-state";
+
+      empty.innerHTML = `
+        <div class="empty-icon">🧾</div>
+
+        <h3>No sales yet</h3>
+
+        <p>Your recent sales will appear here.</p>
+
+        <button class="primary-button" id="emptySaleButton">
+          Create First Sale
+        </button>
+      `;
+
+
+      panel.appendChild(empty);
+
+
+      const button =
+        document.getElementById("emptySaleButton");
+
+      if (button) {
+        button.addEventListener(
+          "click",
+          openSalesPage
+        );
       }
+
+
+      return;
+    }
+
+
+    const recentSales =
+      [...sales]
+        .sort((a, b) => {
+
+          return (
+            new Date(b.date || 0) -
+            new Date(a.date || 0)
+          );
+
+        })
+        .slice(0, 5);
+
+
+    const table =
+      document.createElement("div");
+
+    table.className =
+      "recent-sales-table";
+
+
+    table.innerHTML = `
+      <div class="recent-sales-head">
+        <span>Customer</span>
+        <span>Total</span>
+      </div>
+    `;
+
+
+    recentSales.forEach(sale => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "recent-sales-row";
+
+
+      const customer =
+        sale.customer ||
+        "Walk-in Customer";
+
+
+      const total =
+        Number(sale.total) || 0;
+
+
+      row.innerHTML = `
+        <div>
+          <strong>${escapeHTML(customer)}</strong>
+          <small>${formatDate(sale.date)}</small>
+        </div>
+
+        <strong>${formatMoney(total)}</strong>
+      `;
+
+
+      table.appendChild(row);
 
     });
 
-  });
+
+    panel.appendChild(table);
+
+  }
 
 
-  // ------------------------------------------
+  // ==========================================
+  // DATE FORMAT
+  // ==========================================
+
+  function formatDate(value) {
+
+    if (!value) {
+      return "-";
+    }
+
+    const date =
+      new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "-";
+    }
+
+    return date.toLocaleDateString(
+      undefined,
+      {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }
+    );
+
+  }
+
+
+  // ==========================================
+  // HTML ESCAPE
+  // ==========================================
+
+  function escapeHTML(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  // ==========================================
   // NOTIFICATIONS
-  // ------------------------------------------
+  // ==========================================
 
   const notificationButton =
     document.querySelector(".icon-button");
@@ -473,60 +687,100 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (notificationButton) {
 
-    notificationButton.addEventListener("click", () => {
+    notificationButton.addEventListener(
+      "click",
+      () => {
 
-      const products =
-        getArray("shopManagerProducts");
-
-
-      const lowStock =
-        products.filter(product => {
-
-          const stock =
-            Number(product.stock) || 0;
-
-          return stock <= 5;
-
-        });
+        const products =
+          getArray("shopManagerProducts");
 
 
-      if (lowStock.length > 0) {
+        let threshold = 5;
 
-        alert(
-          `You have ${lowStock.length} low-stock or out-of-stock product(s).`
-        );
+        try {
 
-      } else {
+          const settings =
+            JSON.parse(
+              localStorage.getItem(
+                "shopManagerSettings"
+              )
+            );
 
-        alert("No new notifications.");
+          threshold =
+            Math.max(
+              1,
+              Number(settings?.lowStockThreshold) || 5
+            );
+
+        } catch (error) {
+          threshold = 5;
+        }
+
+
+        const lowStock =
+          products.filter(product => {
+
+            const stock =
+              Number(product.stock) || 0;
+
+            return stock <= threshold;
+
+          });
+
+
+        if (lowStock.length > 0) {
+
+          alert(
+            `You have ${lowStock.length} low-stock or out-of-stock product(s).`
+          );
+
+        } else {
+
+          alert("No new notifications.");
+
+        }
 
       }
-
-    });
+    );
 
   }
 
 
-  // ------------------------------------------
+  // ==========================================
+  // AUTO REFRESH
+  // ==========================================
+
+  window.addEventListener(
+    "storage",
+    () => {
+
+      updateDashboard();
+
+    }
+  );
+
+
+  // ==========================================
   // GLOBAL SHOP MANAGER OBJECT
-  // ------------------------------------------
+  // ==========================================
 
   window.ShopManager = {
 
-    showPage: showPage,
-
-    updateDashboard: updateDashboard,
-
-    getArray: getArray
+    showPage,
+    updateDashboard,
+    getArray,
+    formatMoney
 
   };
 
 
-  // ------------------------------------------
+  // ==========================================
   // START
-  // ------------------------------------------
+  // ==========================================
 
   showPage("dashboard");
+
+  updateDashboard();
 
 });
 ```
