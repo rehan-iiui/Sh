@@ -5,33 +5,43 @@ let customers = [];
 let sales = [];
 let editingCustomerId = null;
 
+
 /* =========================
    DOM ELEMENTS
-========================= */
+   ========================= */
 
-const addCustomerBtn =
-  document.getElementById("addCustomerBtn");
+const addCustomerButton =
+  document.getElementById("addCustomerButton");
 
-const emptyAddCustomerBtn =
-  document.getElementById("emptyAddCustomerBtn");
+const emptyAddCustomerButton =
+  document.getElementById("emptyAddCustomerButton");
 
 const customerModal =
   document.getElementById("customerModal");
 
+const customerDetailsModal =
+  document.getElementById("customerDetailsModal");
+
 const closeCustomerModal =
   document.getElementById("closeCustomerModal");
 
-const cancelCustomerBtn =
-  document.getElementById("cancelCustomerBtn");
+const closeCustomerDetailsModal =
+  document.getElementById("closeCustomerDetailsModal");
 
-const customerForm =
-  document.getElementById("customerForm");
+const closeCustomerDetailsButton =
+  document.getElementById("closeCustomerDetailsButton");
+
+const cancelCustomerButton =
+  document.getElementById("cancelCustomerButton");
+
+const saveCustomerButton =
+  document.getElementById("saveCustomerButton");
 
 const customerModalTitle =
   document.getElementById("customerModalTitle");
 
-const customerFullName =
-  document.getElementById("customerFullName");
+const customerName =
+  document.getElementById("customerName");
 
 const customerPhone =
   document.getElementById("customerPhone");
@@ -45,66 +55,131 @@ const customerAddress =
 const customerNotes =
   document.getElementById("customerNotes");
 
-const customerSearch =
-  document.getElementById("customerSearch");
+const searchInput =
+  document.getElementById("searchInput");
 
 const customersTableBody =
   document.getElementById("customersTableBody");
 
-const totalCustomers =
+const emptyState =
+  document.getElementById("emptyState");
+
+const customerDetailsContent =
+  document.getElementById("customerDetailsContent");
+
+const totalCustomersElement =
   document.getElementById("totalCustomers");
 
-const activeCustomers =
+const activeCustomersElement =
   document.getElementById("activeCustomers");
 
-const customerOrders =
-  document.getElementById("customerOrders");
+const totalOrdersElement =
+  document.getElementById("totalOrders");
 
-const customerPurchases =
-  document.getElementById("customerPurchases");
+const totalPurchasesElement =
+  document.getElementById("totalPurchases");
 
 
 /* =========================
-   LOAD / SAVE DATA
-========================= */
+   STORAGE
+   ========================= */
 
-function loadCustomers() {
+function loadData() {
+
   try {
-    customers = JSON.parse(
-      localStorage.getItem(CUSTOMERS_KEY) || "[]"
+
+    const storedCustomers =
+      localStorage.getItem(CUSTOMERS_KEY);
+
+    const storedSales =
+      localStorage.getItem(SALES_KEY);
+
+    customers =
+      storedCustomers
+        ? JSON.parse(storedCustomers)
+        : [];
+
+    sales =
+      storedSales
+        ? JSON.parse(storedSales)
+        : [];
+
+
+    if (!Array.isArray(customers)) {
+      customers = [];
+    }
+
+    if (!Array.isArray(sales)) {
+      sales = [];
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Could not load customer data:",
+      error
     );
-  } catch {
+
     customers = [];
+    sales = [];
   }
 }
 
+
 function saveCustomers() {
+
   localStorage.setItem(
     CUSTOMERS_KEY,
     JSON.stringify(customers)
   );
 }
 
-function loadSales() {
+
+/* =========================
+   CURRENCY
+   ========================= */
+
+function getCurrency() {
+
   try {
-    sales = JSON.parse(
-      localStorage.getItem(SALES_KEY) || "[]"
-    );
-  } catch {
-    sales = [];
+
+    const settings =
+      JSON.parse(
+        localStorage.getItem(
+          "shopManagerSettings"
+        ) || "{}"
+      );
+
+    return settings.currency || "Rs";
+
+  } catch (error) {
+
+    return "Rs";
   }
+}
+
+
+function formatMoney(value) {
+
+  const number =
+    Number(value) || 0;
+
+  return `${getCurrency()} ${number.toLocaleString(
+    undefined,
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }
+  )}`;
 }
 
 
 /* =========================
    HELPERS
-========================= */
-
-function formatMoney(value) {
-  return `Rs. ${Number(value || 0).toLocaleString()}`;
-}
+   ========================= */
 
 function escapeHTML(value) {
+
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -113,18 +188,55 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
-function getInitials(name) {
-  const words = String(name || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
 
-  if (words.length === 0) {
-    return "?";
+function formatDate(dateValue) {
+
+  if (!dateValue) {
+    return "-";
+  }
+
+  const date =
+    new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return date.toLocaleDateString(
+    undefined,
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }
+  );
+}
+
+
+function normalizeName(name) {
+
+  return String(name || "")
+    .trim()
+    .toLowerCase();
+}
+
+
+function getInitials(name) {
+
+  const words =
+    String(name || "Customer")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+  if (!words.length) {
+    return "C";
   }
 
   if (words.length === 1) {
-    return words[0].charAt(0).toUpperCase();
+    return words[0]
+      .charAt(0)
+      .toUpperCase();
   }
 
   return (
@@ -135,78 +247,227 @@ function getInitials(name) {
 
 
 /* =========================
-   CUSTOMER SALES DATA
-========================= */
+   SALE PAYMENT NORMALIZER
+   ========================= */
 
-function getCustomerStats(customer) {
+function normalizeSale(sale) {
 
-  let orders = 0;
-  let purchases = 0;
+  const total =
+    Number(sale.total) || 0;
 
-  sales.forEach(sale => {
+  let status =
+    sale.paymentStatus;
 
-    const saleCustomer =
-      String(sale.customer || "")
-        .trim()
-        .toLowerCase();
 
-    const customerName =
-      String(customer.name || "")
-        .trim()
-        .toLowerCase();
+  /*
+    Older sales were created before
+    payment tracking existed.
+    Treat them as fully paid.
+  */
 
-    if (
-      saleCustomer === customerName
-    ) {
-      orders += 1;
-      purchases += Number(sale.total || 0);
-    }
+  if (
+    status !== "paid" &&
+    status !== "partial" &&
+    status !== "unpaid"
+  ) {
 
-  });
+    status = "paid";
+  }
+
+
+  let amountPaid;
+
+
+  if (status === "paid") {
+
+    amountPaid = total;
+
+  } else if (status === "unpaid") {
+
+    amountPaid = 0;
+
+  } else {
+
+    amountPaid =
+      Number(sale.amountPaid) || 0;
+
+    amountPaid =
+      Math.max(
+        0,
+        Math.min(
+          amountPaid,
+          total
+        )
+      );
+  }
+
+
+  const balance =
+    Math.max(
+      0,
+      total - amountPaid
+    );
+
 
   return {
-    orders,
-    purchases
+    ...sale,
+    paymentStatus: status,
+    amountPaid,
+    balance
   };
 }
 
 
 /* =========================
-   MODAL
-========================= */
+   CUSTOMER SALES
+   ========================= */
 
-function openAddCustomerModal() {
+function getCustomerSales(customer) {
+
+  const customerNameValue =
+    normalizeName(customer.name);
+
+
+  return sales
+    .filter(sale => {
+
+      return (
+        normalizeName(
+          sale.customer
+        ) === customerNameValue
+      );
+
+    })
+    .map(normalizeSale)
+    .sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    );
+}
+
+
+/* =========================
+   CUSTOMER STATISTICS
+   ========================= */
+
+function getCustomerStats(customer) {
+
+  const customerSales =
+    getCustomerSales(customer);
+
+
+  const totalPurchases =
+    customerSales.reduce(
+      (sum, sale) =>
+        sum +
+        (Number(sale.total) || 0),
+      0
+    );
+
+
+  const totalPaid =
+    customerSales.reduce(
+      (sum, sale) =>
+        sum +
+        (Number(sale.amountPaid) || 0),
+      0
+    );
+
+
+  const totalBalance =
+    customerSales.reduce(
+      (sum, sale) =>
+        sum +
+        (Number(sale.balance) || 0),
+      0
+    );
+
+
+  const itemsPurchased =
+    customerSales.reduce(
+      (sum, sale) =>
+        sum +
+        (sale.items || []).reduce(
+          (itemSum, item) =>
+            itemSum +
+            (Number(item.quantity) || 0),
+          0
+        ),
+      0
+    );
+
+
+  return {
+    orders: customerSales.length,
+    totalPurchases,
+    totalPaid,
+    totalBalance,
+    itemsPurchased,
+    sales: customerSales
+  };
+}
+
+
+/* =========================
+   OPEN ADD CUSTOMER
+   ========================= */
+
+function openAddCustomer() {
 
   editingCustomerId = null;
 
   customerModalTitle.textContent =
     "Add Customer";
 
-  customerForm.reset();
+  saveCustomerButton.textContent =
+    "Save Customer";
+
+  customerName.value = "";
+  customerPhone.value = "";
+  customerEmail.value = "";
+  customerAddress.value = "";
+  customerNotes.value = "";
 
   customerModal.classList.add("show");
 
   setTimeout(() => {
-    customerFullName.focus();
-  }, 100);
+    customerName.focus();
+  }, 50);
 }
 
-function openEditCustomerModal(id) {
 
-  const customer = customers.find(
-    item => String(item.id) === String(id)
-  );
+/* =========================
+   OPEN EDIT CUSTOMER
+   ========================= */
+
+function openEditCustomer(customerId) {
+
+  const customer =
+    customers.find(
+      item =>
+        String(item.id) ===
+        String(customerId)
+    );
+
 
   if (!customer) {
     return;
   }
 
-  editingCustomerId = customer.id;
+
+  editingCustomerId =
+    customer.id;
+
 
   customerModalTitle.textContent =
     "Edit Customer";
 
-  customerFullName.value =
+  saveCustomerButton.textContent =
+    "Update Customer";
+
+
+  customerName.value =
     customer.name || "";
 
   customerPhone.value =
@@ -221,242 +482,339 @@ function openEditCustomerModal(id) {
   customerNotes.value =
     customer.notes || "";
 
+
   customerModal.classList.add("show");
 
   setTimeout(() => {
-    customerFullName.focus();
-  }, 100);
+    customerName.focus();
+  }, 50);
 }
 
-function closeCustomerModalWindow() {
+
+/* =========================
+   CLOSE CUSTOMER MODAL
+   ========================= */
+
+function closeCustomerModalFunction() {
 
   customerModal.classList.remove("show");
 
   editingCustomerId = null;
-
-  customerForm.reset();
 }
-
-addCustomerBtn.addEventListener(
-  "click",
-  openAddCustomerModal
-);
-
-emptyAddCustomerBtn.addEventListener(
-  "click",
-  openAddCustomerModal
-);
-
-closeCustomerModal.addEventListener(
-  "click",
-  closeCustomerModalWindow
-);
-
-cancelCustomerBtn.addEventListener(
-  "click",
-  closeCustomerModalWindow
-);
 
 
 /* =========================
    SAVE CUSTOMER
-========================= */
+   ========================= */
 
-customerForm.addEventListener(
-  "submit",
-  event => {
+function saveCustomer() {
 
-    event.preventDefault();
+  const name =
+    customerName.value.trim();
 
-    const name =
-      customerFullName.value.trim();
+  const phone =
+    customerPhone.value.trim();
 
-    const phone =
-      customerPhone.value.trim();
+  const email =
+    customerEmail.value.trim();
 
-    const email =
-      customerEmail.value.trim();
+  const address =
+    customerAddress.value.trim();
 
-    const address =
-      customerAddress.value.trim();
-
-    const notes =
-      customerNotes.value.trim();
+  const notes =
+    customerNotes.value.trim();
 
 
-    if (!name) {
-      alert("Please enter the customer's name.");
-      customerFullName.focus();
+  if (!name) {
+
+    alert(
+      "Please enter the customer's name."
+    );
+
+    customerName.focus();
+
+    return;
+  }
+
+
+  /*
+    Prevent duplicate names.
+  */
+
+  const duplicate =
+    customers.find(customer => {
+
+      if (
+        editingCustomerId &&
+        String(customer.id) ===
+        String(editingCustomerId)
+      ) {
+        return false;
+      }
+
+      return (
+        normalizeName(customer.name) ===
+        normalizeName(name)
+      );
+
+    });
+
+
+  if (duplicate) {
+
+    alert(
+      "A customer with this name already exists."
+    );
+
+    return;
+  }
+
+
+  if (editingCustomerId) {
+
+    const customer =
+      customers.find(
+        item =>
+          String(item.id) ===
+          String(editingCustomerId)
+      );
+
+
+    if (!customer) {
       return;
     }
 
 
-    /* EDIT CUSTOMER */
+    /*
+      Important:
+      Sales are linked to customers by name.
+      If the name changes, update old sales
+      so the purchase history stays connected.
+    */
 
-    if (editingCustomerId !== null) {
+    const oldName =
+      customer.name;
 
-      const customer =
-        customers.find(
-          item =>
-            String(item.id) ===
-            String(editingCustomerId)
-        );
 
-      if (!customer) {
-        alert("Customer not found.");
-        return;
-      }
+    if (
+      normalizeName(oldName) !==
+      normalizeName(name)
+    ) {
 
-      customer.name = name;
-      customer.phone = phone;
-      customer.email = email;
-      customer.address = address;
-      customer.notes = notes;
+      sales =
+        sales.map(sale => {
 
-    }
+          if (
+            normalizeName(
+              sale.customer
+            ) ===
+            normalizeName(oldName)
+          ) {
 
-    /* ADD CUSTOMER */
+            return {
+              ...sale,
+              customer: name
+            };
+          }
 
-    else {
+          return sale;
+        });
 
-      const newCustomer = {
 
-        id:
-          "C-" +
-          Date.now()
-            .toString()
-            .slice(-8),
-
-        name: name,
-
-        phone: phone,
-
-        email: email,
-
-        address: address,
-
-        notes: notes,
-
-        createdAt:
-          new Date().toISOString()
-
-      };
-
-      customers.unshift(newCustomer);
+      localStorage.setItem(
+        SALES_KEY,
+        JSON.stringify(sales)
+      );
     }
 
 
-    saveCustomers();
+    customer.name =
+      name;
 
-    closeCustomerModalWindow();
+    customer.phone =
+      phone;
 
-    renderCustomers();
+    customer.email =
+      email;
 
-    updateStatistics();
+    customer.address =
+      address;
+
+    customer.notes =
+      notes;
+
+    customer.updatedAt =
+      new Date().toISOString();
+
 
     alert(
-      editingCustomerId !== null
-        ? "Customer updated successfully!"
-        : "Customer added successfully!"
+      "Customer updated successfully."
+    );
+
+  } else {
+
+    const customer = {
+
+      id:
+        Date.now().toString(),
+
+      name,
+
+      phone,
+
+      email,
+
+      address,
+
+      notes,
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString()
+    };
+
+
+    customers.unshift(customer);
+
+    alert(
+      "Customer added successfully."
     );
   }
-);
+
+
+  saveCustomers();
+
+  closeCustomerModalFunction();
+
+  renderAll();
+}
 
 
 /* =========================
-   RENDER CUSTOMERS
-========================= */
+   DELETE CUSTOMER
+   ========================= */
 
-function renderCustomers(searchTerm = "") {
+function deleteCustomer(customerId) {
 
-  loadCustomers();
-  loadSales();
+  const customer =
+    customers.find(
+      item =>
+        String(item.id) ===
+        String(customerId)
+    );
 
-  const search =
-    searchTerm.trim().toLowerCase();
 
-  let filteredCustomers = customers;
-
-
-  if (search) {
-
-    filteredCustomers =
-      customers.filter(customer => {
-
-        return (
-          String(customer.name || "")
-            .toLowerCase()
-            .includes(search) ||
-
-          String(customer.phone || "")
-            .toLowerCase()
-            .includes(search) ||
-
-          String(customer.email || "")
-            .toLowerCase()
-            .includes(search) ||
-
-          String(customer.address || "")
-            .toLowerCase()
-            .includes(search)
-        );
-
-      });
-
+  if (!customer) {
+    return;
   }
 
 
-  if (filteredCustomers.length === 0) {
+  const customerSales =
+    getCustomerSales(customer);
 
-    customersTableBody.innerHTML = `
-      <tr>
 
-        <td colspan="6">
+  let message =
+    `Delete "${customer.name}"?`;
 
-          <div class="empty-customers">
 
-            <div class="empty-customers-icon">
-              👥
-            </div>
+  if (customerSales.length) {
 
-            <h2>
-              ${
-                search
-                  ? "No customers found"
-                  : "No customers yet"
-              }
-            </h2>
+    message +=
+      `\n\nThis customer has ${customerSales.length} recorded sale(s).`;
 
-            <p>
-              ${
-                search
-                  ? "Try another search."
-                  : "Add your first customer to get started."
-              }
-            </p>
+    message +=
+      "\n\nThe sales will NOT be deleted.";
+  }
 
-            ${
-              search
-                ? ""
-                : `
-                  <button
-                    class="add-customer-btn"
-                    onclick="openAddCustomerModal()"
-                  >
-                    + Add First Customer
-                  </button>
-                `
-            }
 
-          </div>
+  message +=
+    "\n\nContinue?";
 
-        </td>
 
-      </tr>
-    `;
+  if (!confirm(message)) {
+    return;
+  }
+
+
+  customers =
+    customers.filter(
+      item =>
+        String(item.id) !==
+        String(customerId)
+    );
+
+
+  saveCustomers();
+
+  renderAll();
+}
+
+
+/* =========================
+   CUSTOMER TABLE
+   ========================= */
+
+function renderCustomersTable() {
+
+  const search =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+
+  const filteredCustomers =
+    customers.filter(customer => {
+
+      if (!search) {
+        return true;
+      }
+
+
+      const name =
+        String(
+          customer.name || ""
+        ).toLowerCase();
+
+      const phone =
+        String(
+          customer.phone || ""
+        ).toLowerCase();
+
+      const email =
+        String(
+          customer.email || ""
+        ).toLowerCase();
+
+      const address =
+        String(
+          customer.address || ""
+        ).toLowerCase();
+
+
+      return (
+        name.includes(search) ||
+        phone.includes(search) ||
+        email.includes(search) ||
+        address.includes(search)
+      );
+    });
+
+
+  if (!filteredCustomers.length) {
+
+    customersTableBody.innerHTML = "";
+
+    emptyState.style.display =
+      "block";
 
     return;
   }
+
+
+  emptyState.style.display =
+    "none";
 
 
   customersTableBody.innerHTML =
@@ -466,97 +824,89 @@ function renderCustomers(searchTerm = "") {
         const stats =
           getCustomerStats(customer);
 
-        const initials =
-          getInitials(customer.name);
 
         return `
           <tr>
 
             <td>
-
-              <div class="customer-name">
-
-                <div class="customer-avatar">
-                  ${escapeHTML(initials)}
-                </div>
-
-                <div>
-
-                  <strong>
-                    ${escapeHTML(customer.name)}
-                  </strong>
-
-                  <small>
-                    ${escapeHTML(customer.notes || "Customer")}
-                  </small>
-
-                </div>
-
+              <div class="customer-name-cell">
+                ${escapeHTML(customer.name)}
               </div>
-
             </td>
-
 
             <td>
-
-              <span class="customer-phone">
-                ${
-                  escapeHTML(
-                    customer.phone ||
-                    "—"
-                  )
-                }
-              </span>
-
+              <div class="customer-phone-cell">
+                ${escapeHTML(
+                  customer.phone || "-"
+                )}
+              </div>
             </td>
-
 
             <td>
-
-              <span class="customer-email">
-                ${
-                  escapeHTML(
-                    customer.email ||
-                    "—"
-                  )
-                }
-              </span>
-
+              <div class="customer-email-cell">
+                ${escapeHTML(
+                  customer.email || "-"
+                )}
+              </div>
             </td>
-
 
             <td>
               ${stats.orders}
             </td>
 
+            <td>
+              <span class="purchase-value">
+                ${formatMoney(
+                  stats.totalPurchases
+                )}
+              </span>
+            </td>
 
             <td>
 
-              <strong>
-                ${formatMoney(stats.purchases)}
-              </strong>
+              <span class="${
+                stats.totalBalance > 0
+                  ? "balance-positive"
+                  : "balance-zero"
+              }">
+
+                ${formatMoney(
+                  stats.totalBalance
+                )}
+
+              </span>
 
             </td>
 
-
             <td>
 
-              <div class="customer-actions-cell">
+              <div class="customer-actions">
 
                 <button
-                  class="action-btn edit-btn"
-                  onclick="openEditCustomerModal('${escapeHTML(customer.id)}')"
-                  title="Edit customer"
+                  type="button"
+                  class="view-customer-button"
+                  data-action="view"
+                  data-id="${escapeHTML(customer.id)}"
                 >
-                  ✏️
+                  View
                 </button>
 
                 <button
-                  class="action-btn delete-btn"
-                  onclick="deleteCustomer('${escapeHTML(customer.id)}')"
-                  title="Delete customer"
+                  type="button"
+                  class="edit-customer-button"
+                  data-action="edit"
+                  data-id="${escapeHTML(customer.id)}"
                 >
-                  🗑️
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  class="delete-customer-button"
+                  data-action="delete"
+                  data-id="${escapeHTML(customer.id)}"
+                >
+                  Delete
                 </button>
 
               </div>
@@ -572,17 +922,70 @@ function renderCustomers(searchTerm = "") {
 
 
 /* =========================
-   DELETE CUSTOMER
-========================= */
+   DASHBOARD STATS
+   ========================= */
 
-function deleteCustomer(id) {
+function updateStats() {
+
+  const totalCustomers =
+    customers.length;
+
+
+  /*
+    Active = customers with
+    at least one sale.
+  */
+
+  const activeCustomers =
+    customers.filter(
+      customer =>
+        getCustomerSales(customer).length > 0
+    ).length;
+
+
+  const totalOrders =
+    sales.length;
+
+
+  const totalPurchases =
+    sales.reduce(
+      (sum, sale) =>
+        sum +
+        (Number(sale.total) || 0),
+      0
+    );
+
+
+  totalCustomersElement.textContent =
+    totalCustomers.toLocaleString();
+
+
+  activeCustomersElement.textContent =
+    activeCustomers.toLocaleString();
+
+
+  totalOrdersElement.textContent =
+    totalOrders.toLocaleString();
+
+
+  totalPurchasesElement.textContent =
+    formatMoney(totalPurchases);
+}
+
+
+/* =========================
+   VIEW CUSTOMER DETAILS
+   ========================= */
+
+function openCustomerDetails(customerId) {
 
   const customer =
     customers.find(
       item =>
         String(item.id) ===
-        String(id)
+        String(customerId)
     );
+
 
   if (!customer) {
     return;
@@ -593,140 +996,544 @@ function deleteCustomer(id) {
     getCustomerStats(customer);
 
 
-  const message =
-    stats.orders > 0
-      ? `Delete "${customer.name}"?\n\nThis customer has ${stats.orders} recorded order(s). The sales records will NOT be deleted.`
-      : `Delete "${customer.name}"?`;
+  const historyRows =
+    stats.sales.map(sale => {
+
+      const itemNames =
+        (sale.items || [])
+          .map(item => {
+
+            const quantity =
+              Number(item.quantity) || 0;
+
+            return `${escapeHTML(
+              item.name || "Product"
+            )} × ${quantity}`;
+
+          })
+          .join(", ");
 
 
-  const confirmed =
-    confirm(message);
+      const statusLabel =
+        sale.paymentStatus === "partial"
+          ? "Partially Paid"
+          : sale.paymentStatus === "unpaid"
+            ? "Unpaid"
+            : "Paid";
 
 
-  if (!confirmed) {
-    return;
-  }
+      return `
+        <div class="history-row">
+
+          <div>
+            ${formatDate(sale.date)}
+          </div>
+
+          <div class="history-customer-items">
+            ${itemNames || "No items"}
+          </div>
+
+          <div class="history-total">
+            ${formatMoney(sale.total)}
+          </div>
+
+          <div>
+            ${formatMoney(sale.amountPaid)}
+          </div>
+
+          <div>
+
+            <span class="history-status ${
+              sale.paymentStatus
+            }">
+
+              ${statusLabel}
+
+            </span>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
 
 
-  customers =
-    customers.filter(
-      item =>
-        String(item.id) !==
-        String(id)
-    );
+  customerDetailsContent.innerHTML = `
+
+    <div class="customer-profile">
+
+      <!-- PROFILE HEADER -->
+
+      <div class="customer-profile-header">
+
+        <div class="customer-avatar">
+          ${escapeHTML(
+            getInitials(customer.name)
+          )}
+        </div>
+
+        <div>
+
+          <div class="customer-profile-name">
+            ${escapeHTML(customer.name)}
+          </div>
+
+          <div class="customer-profile-contact">
+
+            ${
+              customer.phone
+                ? escapeHTML(customer.phone)
+                : "No phone number"
+            }
+
+            ${
+              customer.email
+                ? ` • ${escapeHTML(customer.email)}`
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+      </div>
 
 
-  saveCustomers();
+      <!-- SUMMARY -->
 
-  renderCustomers(
-    customerSearch.value
+      <div class="customer-summary-grid">
+
+        <div class="customer-summary-card">
+
+          <span>
+            Total Orders
+          </span>
+
+          <strong>
+            ${stats.orders}
+          </strong>
+
+        </div>
+
+
+        <div class="customer-summary-card">
+
+          <span>
+            Total Purchases
+          </span>
+
+          <strong>
+            ${formatMoney(
+              stats.totalPurchases
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="customer-summary-card">
+
+          <span>
+            Total Paid
+          </span>
+
+          <strong>
+            ${formatMoney(
+              stats.totalPaid
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="customer-summary-card">
+
+          <span>
+            Outstanding Balance
+          </span>
+
+          <strong class="${
+            stats.totalBalance > 0
+              ? "balance-positive"
+              : "balance-zero"
+          }">
+
+            ${formatMoney(
+              stats.totalBalance
+            )}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- CUSTOMER INFORMATION -->
+
+      <div class="customer-info-grid">
+
+        <div class="customer-info-box">
+
+          <span>
+            Phone
+          </span>
+
+          <strong>
+            ${
+              customer.phone
+                ? escapeHTML(customer.phone)
+                : "Not provided"
+            }
+          </strong>
+
+        </div>
+
+
+        <div class="customer-info-box">
+
+          <span>
+            Email
+          </span>
+
+          <strong>
+            ${
+              customer.email
+                ? escapeHTML(customer.email)
+                : "Not provided"
+            }
+          </strong>
+
+        </div>
+
+
+        <div class="customer-info-box full-width">
+
+          <span>
+            Address
+          </span>
+
+          <p>
+            ${
+              customer.address
+                ? escapeHTML(customer.address)
+                : "Not provided"
+            }
+          </p>
+
+        </div>
+
+
+        <div class="customer-info-box full-width">
+
+          <span>
+            Notes
+          </span>
+
+          <p>
+            ${
+              customer.notes
+                ? escapeHTML(customer.notes)
+                : "No notes"
+            }
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- PURCHASE HISTORY -->
+
+      <div class="history-title">
+        Purchase History
+      </div>
+
+
+      <div class="purchase-history">
+
+        ${
+          stats.sales.length
+
+            ? `
+
+              <div class="history-row header">
+
+                <div>
+                  Date
+                </div>
+
+                <div>
+                  Items
+                </div>
+
+                <div>
+                  Total
+                </div>
+
+                <div>
+                  Paid
+                </div>
+
+                <div>
+                  Status
+                </div>
+
+              </div>
+
+              ${historyRows}
+
+            `
+
+            : `
+
+              <div class="history-empty">
+                No purchases recorded for this customer yet.
+              </div>
+
+            `
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  customerDetailsModal.classList.add(
+    "show"
   );
-
-  updateStatistics();
 }
 
 
 /* =========================
-   SEARCH
-========================= */
+   RENDER ALL
+   ========================= */
 
-customerSearch.addEventListener(
-  "input",
+function renderAll() {
+
+  renderCustomersTable();
+
+  updateStats();
+}
+
+
+/* =========================
+   EVENT LISTENERS
+   ========================= */
+
+addCustomerButton.addEventListener(
+  "click",
+  openAddCustomer
+);
+
+
+emptyAddCustomerButton.addEventListener(
+  "click",
+  openAddCustomer
+);
+
+
+closeCustomerModal.addEventListener(
+  "click",
+  closeCustomerModalFunction
+);
+
+
+cancelCustomerButton.addEventListener(
+  "click",
+  closeCustomerModalFunction
+);
+
+
+saveCustomerButton.addEventListener(
+  "click",
+  saveCustomer
+);
+
+
+closeCustomerDetailsModal.addEventListener(
+  "click",
   () => {
-
-    renderCustomers(
-      customerSearch.value
+    customerDetailsModal.classList.remove(
+      "show"
     );
+  }
+);
+
+
+closeCustomerDetailsButton.addEventListener(
+  "click",
+  () => {
+    customerDetailsModal.classList.remove(
+      "show"
+    );
+  }
+);
+
+
+searchInput.addEventListener(
+  "input",
+  renderCustomersTable
+);
+
+
+/* =========================
+   TABLE ACTIONS
+   ========================= */
+
+customersTableBody.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest("button");
+
+    if (!button) {
+      return;
+    }
+
+
+    const action =
+      button.dataset.action;
+
+    const customerId =
+      button.dataset.id;
+
+
+    if (action === "view") {
+
+      openCustomerDetails(
+        customerId
+      );
+
+    } else if (action === "edit") {
+
+      openEditCustomer(
+        customerId
+      );
+
+    } else if (action === "delete") {
+
+      deleteCustomer(
+        customerId
+      );
+
+    }
 
   }
 );
 
 
 /* =========================
-   STATISTICS
-========================= */
-
-function updateStatistics() {
-
-  loadCustomers();
-  loadSales();
-
-
-  let totalOrderCount = 0;
-  let totalPurchaseAmount = 0;
-
-
-  customers.forEach(customer => {
-
-    const stats =
-      getCustomerStats(customer);
-
-    totalOrderCount +=
-      stats.orders;
-
-    totalPurchaseAmount +=
-      stats.purchases;
-
-  });
-
-
-  /*
-    Active customer means a customer
-    who has at least one recorded order.
-  */
-
-  const activeCount =
-    customers.filter(customer => {
-
-      return getCustomerStats(customer)
-        .orders > 0;
-
-    }).length;
-
-
-  totalCustomers.textContent =
-    customers.length;
-
-  activeCustomers.textContent =
-    activeCount;
-
-  customerOrders.textContent =
-    totalOrderCount;
-
-  customerPurchases.textContent =
-    formatMoney(totalPurchaseAmount);
-}
-
-
-/* =========================
-   MODAL CONTROLS
-========================= */
+   MODAL BACKDROPS
+   ========================= */
 
 customerModal.addEventListener(
   "click",
   event => {
 
     if (
-      event.target ===
-      customerModal
+      event.target === customerModal
     ) {
-      closeCustomerModalWindow();
+
+      closeCustomerModalFunction();
     }
 
   }
 );
 
 
+customerDetailsModal.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target ===
+      customerDetailsModal
+    ) {
+
+      customerDetailsModal.classList.remove(
+        "show"
+      );
+    }
+
+  }
+);
+
+
+/* =========================
+   KEYBOARD
+   ========================= */
+
 document.addEventListener(
   "keydown",
   event => {
 
-    if (
-      event.key === "Escape" &&
-      customerModal.classList.contains("show")
-    ) {
-      closeCustomerModalWindow();
+    if (event.key !== "Escape") {
+      return;
     }
+
+
+    if (
+      customerModal.classList.contains(
+        "show"
+      )
+    ) {
+
+      closeCustomerModalFunction();
+    }
+
+
+    if (
+      customerDetailsModal.classList.contains(
+        "show"
+      )
+    ) {
+
+      customerDetailsModal.classList.remove(
+        "show"
+      );
+    }
+
+  }
+);
+
+
+/* =========================
+   ENTER TO SAVE
+   ========================= */
+
+customerName.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      event.preventDefault();
+
+      saveCustomer();
+    }
+
+  }
+);
+
+
+/* =========================
+   STORAGE SYNC
+   ========================= */
+
+window.addEventListener(
+  "storage",
+  () => {
+
+    loadData();
+
+    renderAll();
 
   }
 );
@@ -734,51 +1541,49 @@ document.addEventListener(
 
 /* =========================
    INITIALIZE
-========================= */
+   ========================= */
 
-loadCustomers();
-loadSales();
+loadData();
 
-renderCustomers();
-updateStatistics();
+renderAll();
 
 
 /* =========================
-   GLOBAL FUNCTIONS
-========================= */
-
-window.openAddCustomerModal =
-  openAddCustomerModal;
-
-window.openEditCustomerModal =
-  openEditCustomerModal;
-
-window.deleteCustomer =
-  deleteCustomer;
-
-
-/* =========================
-   SHOP MANAGER CUSTOMERS API
-========================= */
+   GLOBAL API
+   ========================= */
 
 window.ShopManagerCustomers = {
 
-  getCustomers: () => customers,
+  refresh() {
 
-  getCustomerById: id =>
-    customers.find(
-      customer =>
-        String(customer.id) ===
-        String(id)
-    ),
+    loadData();
 
-  refresh: () => {
+    renderAll();
 
-    loadCustomers();
-    loadSales();
+  },
 
-    renderCustomers();
-    updateStatistics();
+  getCustomers() {
+
+    return [...customers];
+
+  },
+
+  getCustomerStats(customerId) {
+
+    const customer =
+      customers.find(
+        item =>
+          String(item.id) ===
+          String(customerId)
+      );
+
+
+    if (!customer) {
+      return null;
+    }
+
+
+    return getCustomerStats(customer);
 
   }
 
