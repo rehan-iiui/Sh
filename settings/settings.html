@@ -6,212 +6,476 @@
   <title>Settings - Shop Manager</title>
   <link rel="stylesheet" href="settings.css">
 </head>
+
 <body>
 
-  <div class="settings-page">
+<div class="settings-page">
 
-    <div class="page-header">
+  <!-- HEADER -->
+  <header class="page-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Customize and manage your Shop Manager</p>
+    </div>
+  </header>
+
+
+  <!-- SHOP INFORMATION -->
+  <section class="settings-card">
+
+    <div class="section-heading">
       <div>
-        <h1>Settings</h1>
-        <p>Manage your shop information and app preferences.</p>
+        <h2>Shop Information</h2>
+        <p>Your business details</p>
       </div>
-
-      <button class="save-btn" id="saveSettingsBtn">
-        Save Settings
-      </button>
     </div>
 
-    <!-- Shop Information -->
-    <section class="settings-card">
-      <div class="card-title">
-        <div class="title-icon">🏪</div>
-        <div>
-          <h2>Shop Information</h2>
-          <p>Basic information about your business.</p>
-        </div>
-      </div>
+    <form id="shopForm">
 
       <div class="form-grid">
 
         <div class="form-group">
           <label for="shopName">Shop Name</label>
-          <input type="text" id="shopName" placeholder="My Shop">
+          <input
+            type="text"
+            id="shopName"
+            placeholder="My Shop"
+          >
         </div>
 
         <div class="form-group">
           <label for="ownerName">Owner Name</label>
-          <input type="text" id="ownerName" placeholder="Owner name">
+          <input
+            type="text"
+            id="ownerName"
+            placeholder="Owner name"
+          >
         </div>
 
         <div class="form-group">
           <label for="shopPhone">Phone</label>
-          <input type="tel" id="shopPhone" placeholder="03XX-XXXXXXX">
+          <input
+            type="tel"
+            id="shopPhone"
+            placeholder="Phone number"
+          >
         </div>
 
         <div class="form-group">
           <label for="shopEmail">Email</label>
-          <input type="email" id="shopEmail" placeholder="shop@example.com">
-        </div>
-
-        <div class="form-group full-width">
-          <label for="shopAddress">Shop Address</label>
-          <textarea id="shopAddress" rows="3" placeholder="Enter your shop address"></textarea>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Business Settings -->
-    <section class="settings-card">
-
-      <div class="card-title">
-        <div class="title-icon">⚙️</div>
-        <div>
-          <h2>Business Settings</h2>
-          <p>Customize how Shop Manager works.</p>
-        </div>
-      </div>
-
-      <div class="form-grid">
-
-        <div class="form-group">
-          <label for="currency">Currency</label>
-          <select id="currency">
-            <option value="Rs">Rs (Rupees)</option>
-            <option value="$">$ (Dollar)</option>
-            <option value="€">€ (Euro)</option>
-            <option value="£">£ (Pound)</option>
-            <option value="¥">¥ (Yen)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="invoicePrefix">Invoice Prefix</label>
-          <input type="text" id="invoicePrefix" placeholder="INV">
-        </div>
-
-        <div class="form-group">
-          <label for="lowStockThreshold">Low Stock Threshold</label>
-          <input type="number" id="lowStockThreshold" min="1" max="100" placeholder="5">
-          <small>Products at or below this number will be marked as low stock.</small>
+          <input
+            type="email"
+            id="shopEmail"
+            placeholder="shop@example.com"
+          >
         </div>
 
       </div>
-    </section>
 
-    <!-- Appearance -->
-    <section class="settings-card">
-
-      <div class="card-title">
-        <div class="title-icon">🎨</div>
-        <div>
-          <h2>Appearance</h2>
-          <p>Choose how the app looks.</p>
-        </div>
+      <div class="form-group">
+        <label for="shopAddress">Address</label>
+        <textarea
+          id="shopAddress"
+          rows="3"
+          placeholder="Shop address"
+        ></textarea>
       </div>
 
-      <div class="appearance-options">
+      <button
+        type="submit"
+        class="primary-btn"
+      >
+        Save Shop Information
+      </button>
 
-        <label class="theme-option">
-          <input type="radio" name="theme" value="light">
-          <div class="theme-preview light-preview">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <span>Light</span>
+    </form>
+
+  </section>
+
+
+  <!-- BUSINESS SETTINGS -->
+  <section class="settings-card">
+
+    <div class="section-heading">
+      <div>
+        <h2>Business Settings</h2>
+        <p>Configure how your shop works</p>
+      </div>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="currency">Currency</label>
+
+        <select id="currency">
+          <option value="Rs">Rs</option>
+          <option value="$">$</option>
+          <option value="€">€</option>
+          <option value="£">£</option>
+          <option value="¥">¥</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="invoicePrefix">
+          Invoice Prefix
         </label>
 
-        <label class="theme-option">
-          <input type="radio" name="theme" value="dark">
-          <div class="theme-preview dark-preview">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <span>Dark</span>
+        <input
+          type="text"
+          id="invoicePrefix"
+          placeholder="INV"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="lowStockThreshold">
+          Low Stock Threshold
         </label>
 
-        <label class="theme-option">
-          <input type="radio" name="theme" value="system">
-          <div class="theme-preview system-preview">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-          <span>System Default</span>
-        </label>
-
-      </div>
-    </section>
-
-    <!-- Data Management -->
-    <section class="settings-card">
-
-      <div class="card-title">
-        <div class="title-icon">💾</div>
-        <div>
-          <h2>Data Management</h2>
-          <p>Manage your Shop Manager data.</p>
-        </div>
+        <input
+          type="number"
+          id="lowStockThreshold"
+          min="0"
+          step="1"
+          placeholder="5"
+        >
       </div>
 
-      <div class="data-actions">
+    </div>
 
-        <button class="data-btn" id="exportDataBtn">
-          <span>📤</span>
-          <div>
-            <strong>Export Data</strong>
-            <small>Download a backup of your shop data.</small>
-          </div>
-        </button>
+    <button
+      class="primary-btn"
+      id="saveBusinessSettings"
+    >
+      Save Business Settings
+    </button>
 
-        <button class="data-btn" id="importDataBtn">
-          <span>📥</span>
-          <div>
-            <strong>Import Data</strong>
-            <small>Restore data from a backup file.</small>
-          </div>
-        </button>
+  </section>
 
-        <input type="file" id="importFile" accept=".json" hidden>
 
+  <!-- APPEARANCE -->
+  <section class="settings-card">
+
+    <div class="section-heading">
+      <div>
+        <h2>Appearance</h2>
+        <p>Choose how Shop Manager looks</p>
       </div>
-    </section>
+    </div>
 
-    <!-- Danger Zone -->
-    <section class="settings-card danger-card">
+    <div class="appearance-options">
 
-      <div class="card-title">
-        <div class="title-icon">⚠️</div>
-        <div>
-          <h2>Danger Zone</h2>
-          <p>These actions can permanently remove your data.</p>
-        </div>
-      </div>
-
-      <div class="danger-action">
+      <label class="appearance-option">
+        <input
+          type="radio"
+          name="appearance"
+          value="light"
+        >
 
         <div>
-          <strong>Reset Shop Manager</strong>
-          <p>Delete all products, sales, customers, expenses, invoices and settings.</p>
+          <strong>☀️ Light</strong>
+          <span>Use light appearance</span>
         </div>
+      </label>
 
-        <button class="reset-btn" id="resetDataBtn">
-          Reset All Data
-        </button>
+      <label class="appearance-option">
+        <input
+          type="radio"
+          name="appearance"
+          value="dark"
+        >
+
+        <div>
+          <strong>🌙 Dark</strong>
+          <span>Use dark appearance</span>
+        </div>
+      </label>
+
+      <label class="appearance-option">
+        <input
+          type="radio"
+          name="appearance"
+          value="system"
+        >
+
+        <div>
+          <strong>💻 System</strong>
+          <span>Follow your device</span>
+        </div>
+      </label>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADVANCED BACKUP -->
+  <section class="settings-card backup-card">
+
+    <div class="section-heading">
+      <div>
+        <h2>Advanced Backup & Restore</h2>
+        <p>
+          Protect your Shop Manager data with a complete backup.
+        </p>
+      </div>
+    </div>
+
+
+    <!-- BACKUP STATUS -->
+    <div class="backup-status">
+
+      <div class="backup-status-icon">
+        💾
+      </div>
+
+      <div class="backup-status-content">
+
+        <strong id="backupStatusTitle">
+          Your data is stored locally
+        </strong>
+
+        <span id="backupStatusText">
+          Create a backup regularly to protect your shop data.
+        </span>
 
       </div>
 
-    </section>
+    </div>
 
-    <div class="save-message" id="saveMessage">
-      Settings saved successfully!
+
+    <!-- DATA SUMMARY -->
+    <div class="backup-summary">
+
+      <div class="backup-summary-item">
+        <span>Products</span>
+        <strong id="backupProductsCount">0</strong>
+      </div>
+
+      <div class="backup-summary-item">
+        <span>Sales</span>
+        <strong id="backupSalesCount">0</strong>
+      </div>
+
+      <div class="backup-summary-item">
+        <span>Customers</span>
+        <strong id="backupCustomersCount">0</strong>
+      </div>
+
+      <div class="backup-summary-item">
+        <span>Expenses</span>
+        <strong id="backupExpensesCount">0</strong>
+      </div>
+
+      <div class="backup-summary-item">
+        <span>Invoices</span>
+        <strong id="backupInvoicesCount">0</strong>
+      </div>
+
+      <div class="backup-summary-item">
+        <span>Stock Movements</span>
+        <strong id="backupInventoryCount">0</strong>
+      </div>
+
+    </div>
+
+
+    <!-- BACKUP ACTIONS -->
+    <div class="backup-actions">
+
+      <button
+        class="primary-btn"
+        id="exportDataBtn"
+      >
+        💾 Export Full Backup
+      </button>
+
+      <label
+        class="secondary-btn file-btn"
+        for="importDataInput"
+      >
+        📥 Import Backup
+      </label>
+
+      <input
+        type="file"
+        id="importDataInput"
+        accept=".json,application/json"
+        hidden
+      >
+
+    </div>
+
+
+    <!-- LAST BACKUP -->
+    <div class="last-backup">
+
+      <span>
+        Last backup:
+      </span>
+
+      <strong id="lastBackupTime">
+        Never
+      </strong>
+
+    </div>
+
+  </section>
+
+
+  <!-- DANGER ZONE -->
+  <section class="settings-card danger-card">
+
+    <div class="section-heading">
+      <div>
+        <h2>Danger Zone</h2>
+        <p>
+          Be careful when using these actions.
+        </p>
+      </div>
+    </div>
+
+    <div class="danger-content">
+
+      <div>
+        <strong>Reset All Data</strong>
+
+        <p>
+          Permanently remove products, sales,
+          customers, expenses, invoices and
+          inventory history from this device.
+        </p>
+      </div>
+
+      <button
+        class="danger-btn"
+        id="resetDataBtn"
+      >
+        Reset All Data
+      </button>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- IMPORT PREVIEW MODAL -->
+<div
+  class="modal-overlay"
+  id="importModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <div>
+        <h2>Import Backup</h2>
+        <p>
+          Review the backup before restoring it.
+        </p>
+      </div>
+
+      <button
+        class="close-btn"
+        id="closeImportModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="import-warning">
+      ⚠️ Importing a backup will replace the
+      current Shop Manager data.
+    </div>
+
+
+    <div class="import-file-info">
+
+      <div>
+        <span>Backup Date</span>
+        <strong id="importBackupDate">-</strong>
+      </div>
+
+      <div>
+        <span>Backup Version</span>
+        <strong id="importBackupVersion">-</strong>
+      </div>
+
+    </div>
+
+
+    <h3 class="preview-title">
+      Data Included
+    </h3>
+
+
+    <div class="import-preview-grid">
+
+      <div>
+        <span>📦 Products</span>
+        <strong id="importProductsCount">0</strong>
+      </div>
+
+      <div>
+        <span>🛒 Sales</span>
+        <strong id="importSalesCount">0</strong>
+      </div>
+
+      <div>
+        <span>👥 Customers</span>
+        <strong id="importCustomersCount">0</strong>
+      </div>
+
+      <div>
+        <span>💸 Expenses</span>
+        <strong id="importExpensesCount">0</strong>
+      </div>
+
+      <div>
+        <span>🧾 Invoices</span>
+        <strong id="importInvoicesCount">0</strong>
+      </div>
+
+      <div>
+        <span>📊 Stock Movements</span>
+        <strong id="importInventoryCount">0</strong>
+      </div>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="secondary-btn"
+        id="cancelImportBtn"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="primary-btn"
+        id="confirmImportBtn"
+      >
+        Restore Backup
+      </button>
+
     </div>
 
   </div>
 
-  <script src="settings.js"></script>
+</div>
+
+
+<script src="settings.js"></script>
+
 </body>
 </html>
 ```
