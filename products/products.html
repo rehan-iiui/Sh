@@ -1,35 +1,122 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products</title>
-
+  <title>Products - Shop Manager</title>
   <link rel="stylesheet" href="products.css">
 </head>
-
 <body>
 
   <div class="products-page">
 
-    <div class="products-header">
-
+    <!-- HEADER -->
+    <header class="page-header">
       <div>
         <h1>Products</h1>
-        <p>Manage your shop inventory</p>
+        <p>Manage your products and inventory</p>
       </div>
 
-      <button id="addProductBtn" class="add-product-btn">
-        + Add Product
+      <button class="primary-btn" id="addProductBtn">
+        <span>＋</span> Add Product
       </button>
+    </header>
 
-    </div>
+    <!-- PRODUCT STATS -->
+    <section class="stats-grid">
 
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+          <span>Total Products</span>
+          <strong id="totalProducts">0</strong>
+        </div>
+      </div>
 
-    <div class="products-toolbar">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div>
+          <span>Total Stock</span>
+          <strong id="totalStock">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚠️</div>
+        <div>
+          <span>Low Stock</span>
+          <strong id="lowStock">0</strong>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div>
+          <span>Inventory Value</span>
+          <strong id="inventoryValue">Rs 0</strong>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- INVENTORY QUICK ACTIONS -->
+    <section class="inventory-actions-panel">
+
+      <div class="section-heading">
+        <div>
+          <h2>Inventory Management</h2>
+          <p>Adjust stock and track every inventory movement</p>
+        </div>
+
+        <button class="secondary-btn" id="viewHistoryBtn">
+          📜 Stock History
+        </button>
+      </div>
+
+      <div class="inventory-action-grid">
+
+        <button class="inventory-action-card" id="restockBtn">
+          <div class="inventory-action-icon">➕</div>
+          <div>
+            <strong>Restock</strong>
+            <span>Add new stock</span>
+          </div>
+        </button>
+
+        <button class="inventory-action-card" id="removeStockBtn">
+          <div class="inventory-action-icon">➖</div>
+          <div>
+            <strong>Remove Stock</strong>
+            <span>Remove stock manually</span>
+          </div>
+        </button>
+
+        <button class="inventory-action-card" id="damagedStockBtn">
+          <div class="inventory-action-icon">💥</div>
+          <div>
+            <strong>Damaged Stock</strong>
+            <span>Record damaged items</span>
+          </div>
+        </button>
+
+        <button class="inventory-action-card" id="lostStockBtn">
+          <div class="inventory-action-icon">❌</div>
+          <div>
+            <strong>Lost Stock</strong>
+            <span>Record lost items</span>
+          </div>
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- SEARCH / FILTER -->
+    <section class="toolbar">
 
       <div class="search-box">
-        🔎
+        <span>🔍</span>
         <input
           type="text"
           id="searchInput"
@@ -39,244 +126,370 @@
 
       <select id="categoryFilter">
         <option value="all">All Categories</option>
-        <option value="electronics">Electronics</option>
-        <option value="clothing">Clothing</option>
-        <option value="food">Food</option>
-        <option value="other">Other</option>
       </select>
 
-    </div>
+    </section>
 
+    <!-- PRODUCTS -->
+    <section class="products-panel">
 
-    <div class="products-stats">
-
-      <div class="product-stat">
-        <span>Total Products</span>
-        <strong id="productCount">0</strong>
+      <div class="section-heading">
+        <div>
+          <h2>Product Inventory</h2>
+          <p>View and manage your current stock</p>
+        </div>
       </div>
 
-      <div class="product-stat">
-        <span>Total Stock</span>
-        <strong id="stockCount">0</strong>
+      <div class="table-wrapper">
+
+        <table class="products-table">
+
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Buying Price</th>
+              <th>Selling Price</th>
+              <th>Inventory Value</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="productsTableBody"></tbody>
+
+        </table>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📦</div>
+          <h3>No Products Found</h3>
+          <p>Add your first product to start managing your inventory.</p>
+          <button class="primary-btn" id="emptyAddProductBtn">
+            ＋ Add Product
+          </button>
+        </div>
+
       </div>
 
-      <div class="product-stat">
-        <span>Low Stock</span>
-        <strong id="lowStockCount">0</strong>
+    </section>
+
+    <!-- STOCK MOVEMENT SUMMARY -->
+    <section class="movement-panel">
+
+      <div class="section-heading">
+        <div>
+          <h2>Recent Stock Movements</h2>
+          <p>Your latest inventory changes</p>
+        </div>
+
+        <button class="text-btn" id="viewAllHistoryBtn">
+          View All →
+        </button>
       </div>
 
-      <div class="product-stat">
-        <span>Inventory Value</span>
-        <strong id="inventoryValue">Rs. 0</strong>
+      <div class="movement-table-wrapper">
+
+        <table class="movement-table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Reason</th>
+              <th>Quantity</th>
+              <th>Stock After</th>
+            </tr>
+          </thead>
+
+          <tbody id="recentMovementsBody"></tbody>
+
+        </table>
+
+        <div class="empty-small" id="noMovements">
+          <span>📋</span>
+          <p>No stock movements yet.</p>
+        </div>
+
       </div>
 
-    </div>
+    </section>
+
+  </div>
 
 
-    <div class="products-table-container">
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="productModal">
 
-      <table>
+    <div class="modal">
 
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Category</th>
-            <th>Buying Price</th>
-            <th>Selling Price</th>
-            <th>Stock</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Add Product</h2>
+          <p>Enter product information</p>
+        </div>
 
-        <tbody id="productsTableBody">
+        <button class="close-btn" id="closeProductModal">×</button>
+      </div>
 
-          <tr id="emptyProductsRow">
-            <td colspan="7">
+      <form id="productForm">
 
-              <div class="empty-products">
+        <input type="hidden" id="productId">
 
-                <div class="empty-products-icon">
-                  📦
-                </div>
+        <div class="form-group">
+          <label for="productName">Product Name</label>
+          <input
+            type="text"
+            id="productName"
+            placeholder="Enter product name"
+            required
+          >
+        </div>
 
-                <h2>No products yet</h2>
+        <div class="form-group">
+          <label for="productCategory">Category</label>
+          <input
+            type="text"
+            id="productCategory"
+            placeholder="e.g. Electronics"
+            required
+          >
+        </div>
 
-                <p>
-                  Add your first product to start managing inventory.
-                </p>
+        <div class="form-row">
 
-                <button
-                  class="add-product-btn"
-                  id="emptyAddProductBtn"
-                >
-                  + Add First Product
-                </button>
-
-              </div>
-
-            </td>
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-
-    <!-- Add Product Modal -->
-
-    <div class="modal" id="productModal">
-
-      <div class="modal-box">
-
-        <div class="modal-header">
-
-          <div>
-            <h2 id="modalTitle">Add Product</h2>
-            <p>Enter product information</p>
+          <div class="form-group">
+            <label for="productStock">Stock</label>
+            <input
+              type="number"
+              id="productStock"
+              min="0"
+              step="1"
+              placeholder="0"
+              required
+            >
           </div>
 
-          <button id="closeModalBtn" class="close-btn">
-            ×
+          <div class="form-group">
+            <label for="buyingPrice">Buying Price</label>
+            <input
+              type="number"
+              id="buyingPrice"
+              min="0"
+              step="0.01"
+              placeholder="0"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label for="sellingPrice">Selling Price</label>
+          <input
+            type="number"
+            id="sellingPrice"
+            min="0"
+            step="0.01"
+            placeholder="0"
+            required
+          >
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" id="cancelProductBtn">
+            Cancel
+          </button>
+
+          <button type="submit" class="primary-btn">
+            Save Product
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- STOCK ADJUSTMENT MODAL -->
+  <div class="modal-overlay" id="stockModal">
+
+    <div class="modal">
+
+      <div class="modal-header">
+        <div>
+          <h2 id="stockModalTitle">Adjust Stock</h2>
+          <p>Record an inventory movement</p>
+        </div>
+
+        <button class="close-btn" id="closeStockModal">×</button>
+      </div>
+
+      <form id="stockForm">
+
+        <input type="hidden" id="stockProductId">
+
+        <div class="form-group">
+          <label for="stockProduct">Product</label>
+
+          <select id="stockProduct" required>
+            <option value="">Select Product</option>
+          </select>
+        </div>
+
+        <div class="stock-current-box">
+          <span>Current Stock</span>
+          <strong id="currentStockDisplay">0</strong>
+        </div>
+
+        <div class="form-group">
+          <label for="stockReason">Reason</label>
+
+          <select id="stockReason" required>
+
+            <option value="restock">Restock</option>
+            <option value="damaged">Damaged Stock</option>
+            <option value="lost">Lost Stock</option>
+            <option value="removed">Stock Removed</option>
+            <option value="correction">Stock Correction</option>
+            <option value="return">Customer Return</option>
+
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="stockQuantity">Quantity</label>
+
+          <input
+            type="number"
+            id="stockQuantity"
+            min="1"
+            step="1"
+            placeholder="Enter quantity"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="stockNote">Note</label>
+
+          <textarea
+            id="stockNote"
+            rows="3"
+            placeholder="Optional note..."
+          ></textarea>
+        </div>
+
+        <div class="stock-preview">
+
+          <div>
+            <span>Stock Before</span>
+            <strong id="stockBeforePreview">0</strong>
+          </div>
+
+          <div class="preview-arrow">→</div>
+
+          <div>
+            <span>Stock After</span>
+            <strong id="stockAfterPreview">0</strong>
+          </div>
+
+        </div>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="secondary-btn"
+            id="cancelStockBtn"
+          >
+            Cancel
+          </button>
+
+          <button type="submit" class="primary-btn">
+            Save Adjustment
           </button>
 
         </div>
 
+      </form>
 
-        <form id="productForm">
+    </div>
 
-          <div class="form-group">
-
-            <label for="productName">
-              Product Name
-            </label>
-
-            <input
-              type="text"
-              id="productName"
-              placeholder="e.g. Wireless Mouse"
-              required
-            >
-
-          </div>
+  </div>
 
 
-          <div class="form-row">
+  <!-- STOCK HISTORY MODAL -->
+  <div class="modal-overlay" id="historyModal">
 
-            <div class="form-group">
+    <div class="modal modal-large">
 
-              <label for="productCategory">
-                Category
-              </label>
+      <div class="modal-header">
 
-              <select id="productCategory" required>
+        <div>
+          <h2>Stock Movement History</h2>
+          <p>Complete record of inventory changes</p>
+        </div>
 
-                <option value="">
-                  Select category
-                </option>
+        <button class="close-btn" id="closeHistoryModal">×</button>
 
-                <option value="electronics">
-                  Electronics
-                </option>
+      </div>
 
-                <option value="clothing">
-                  Clothing
-                </option>
+      <div class="history-toolbar">
 
-                <option value="food">
-                  Food
-                </option>
+        <input
+          type="text"
+          id="historySearch"
+          placeholder="Search product or reason..."
+        >
 
-                <option value="other">
-                  Other
-                </option>
+        <select id="historyTypeFilter">
+          <option value="all">All Movements</option>
+          <option value="in">Stock Added</option>
+          <option value="out">Stock Removed</option>
+        </select>
 
-              </select>
+        <select id="historyReasonFilter">
+          <option value="all">All Reasons</option>
+          <option value="restock">Restock</option>
+          <option value="damaged">Damaged</option>
+          <option value="lost">Lost</option>
+          <option value="removed">Removed</option>
+          <option value="correction">Correction</option>
+          <option value="return">Return</option>
+        </select>
 
-            </div>
+      </div>
 
+      <div class="history-table-wrapper">
 
-            <div class="form-group">
+        <table class="history-table">
 
-              <label for="productStock">
-                Stock Quantity
-              </label>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Reason</th>
+              <th>Quantity</th>
+              <th>Before</th>
+              <th>After</th>
+              <th>Note</th>
+            </tr>
+          </thead>
 
-              <input
-                type="number"
-                id="productStock"
-                placeholder="0"
-                min="0"
-                required
-              >
+          <tbody id="historyTableBody"></tbody>
 
-            </div>
+        </table>
 
-          </div>
-
-
-          <div class="form-row">
-
-            <div class="form-group">
-
-              <label for="buyingPrice">
-                Buying Price
-              </label>
-
-              <input
-                type="number"
-                id="buyingPrice"
-                placeholder="0"
-                min="0"
-                step="0.01"
-                required
-              >
-
-            </div>
-
-
-            <div class="form-group">
-
-              <label for="sellingPrice">
-                Selling Price
-              </label>
-
-              <input
-                type="number"
-                id="sellingPrice"
-                placeholder="0"
-                min="0"
-                step="0.01"
-                required
-              >
-
-            </div>
-
-          </div>
-
-
-          <div class="form-actions">
-
-            <button
-              type="button"
-              id="cancelBtn"
-              class="cancel-btn"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              class="save-product-btn"
-            >
-              Save Product
-            </button>
-
-          </div>
-
-        </form>
+        <div class="empty-state" id="historyEmpty">
+          <div class="empty-icon">📜</div>
+          <h3>No Stock History</h3>
+          <p>Inventory movements will appear here.</p>
+        </div>
 
       </div>
 
